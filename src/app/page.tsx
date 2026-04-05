@@ -489,7 +489,7 @@ export default function HomePage() {
               alt="Manchester skyline"
               fill
               sizes="100vw"
-              quality={85}
+              quality={90}
               className="object-cover object-bottom"
               priority
             />
