@@ -161,7 +161,7 @@ export default function PropertiesPage() {
   return (
     <>
       {/* ─── HERO BANNER ─── */}
-      <section className="relative h-[40vh] min-h-[280px] flex items-center justify-center overflow-hidden noise-overlay bg-dark pt-16">
+      <section className="relative h-[40vh] min-h-[320px] flex items-center justify-center overflow-hidden noise-overlay bg-dark pt-16">
         <div className="absolute inset-0">
           <Image
             src="/hero.jpg"

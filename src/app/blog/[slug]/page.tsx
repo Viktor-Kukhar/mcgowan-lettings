@@ -62,7 +62,7 @@ export default async function BlogPostPage({ params }: Props) {
   return (
     <>
       {/* ─── HERO ─── */}
-      <section className="relative h-[40vh] min-h-[280px] flex items-end overflow-hidden noise-overlay bg-dark pt-16">
+      <section className="relative h-[40vh] min-h-[320px] flex items-end overflow-hidden noise-overlay bg-dark pt-16">
         <div className="absolute inset-0">
           {post.cover_image ? (
             <Image
