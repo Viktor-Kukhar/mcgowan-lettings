@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
+import { deleteValuationRequest as deleteValuationAction } from "@/app/actions/admin";
 
 interface ValuationRequest {
   id: string;
@@ -90,13 +91,10 @@ export default function AdminValuationsPage() {
   const deleteRequest = async (id: string) => {
     if (!confirm("Delete this valuation request?")) return;
 
-    const { error } = await supabase
-      .from("valuation_requests")
-      .delete()
-      .eq("id", id);
+    const result = await deleteValuationAction(id);
 
-    if (error) {
-      setMessage({ text: "Failed to delete request.", type: "error" });
+    if (!result.success) {
+      setMessage({ text: result.error || "Failed to delete request.", type: "error" });
     } else {
       setRequests((prev) => prev.filter((r) => r.id !== id));
       if (expandedId === id) setExpandedId(null);

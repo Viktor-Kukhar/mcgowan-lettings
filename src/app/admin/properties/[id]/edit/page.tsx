@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import { deleteProperty as deletePropertyAction } from "@/app/actions/admin";
 import SortableImageGrid from "../../SortableImageGrid";
 import { compressImage } from "@/lib/compress-image";
 import { useStorageUsage, formatBytes } from "@/lib/use-storage-usage";
@@ -204,21 +205,10 @@ export default function EditPropertyPage() {
 
     setDeleting(true);
 
-    // Remove images from storage
-    for (const url of imageUrls) {
-      const path = url.split("/property-images/")[1];
-      if (path) {
-        await supabase.storage.from("property-images").remove([path]);
-      }
-    }
+    const result = await deletePropertyAction(id, imageUrls);
 
-    const { error: deleteError } = await supabase
-      .from("properties")
-      .delete()
-      .eq("id", id);
-
-    if (deleteError) {
-      setError(deleteError.message);
+    if (!result.success) {
+      setError(result.error);
       setDeleting(false);
       return;
     }

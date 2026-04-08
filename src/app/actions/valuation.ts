@@ -5,6 +5,15 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 type ValuationResult =
   | { success: true }
   | { success: false; error: string };
@@ -59,10 +68,10 @@ export async function submitValuationForm(formData: {
     // Send email notification to David
     try {
       await resend.emails.send({
-        from: "McGowan Lettings <onboarding@resend.dev>",
+        from: "McGowan Lettings <notifications@mcgowanlettings.co.uk>",
         to: "info@mcgowanlettings.co.uk",
         replyTo: email.trim(),
-        subject: `New Valuation Request from ${name.trim()} — ${address.trim()}`,
+        subject: `New Valuation Request from ${escapeHtml(name.trim())} — ${escapeHtml(address.trim())}`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h2 style="color: #1a1a1a; border-bottom: 2px solid #abd300; padding-bottom: 10px;">
@@ -71,40 +80,40 @@ export async function submitValuationForm(formData: {
             <table style="width: 100%; border-collapse: collapse;">
               <tr>
                 <td style="padding: 8px 0; font-weight: bold; color: #555; width: 140px;">Name:</td>
-                <td style="padding: 8px 0; color: #1a1a1a;">${name.trim()}</td>
+                <td style="padding: 8px 0; color: #1a1a1a;">${escapeHtml(name.trim())}</td>
               </tr>
               <tr>
                 <td style="padding: 8px 0; font-weight: bold; color: #555;">Email:</td>
-                <td style="padding: 8px 0; color: #1a1a1a;">${email.trim()}</td>
+                <td style="padding: 8px 0; color: #1a1a1a;">${escapeHtml(email.trim())}</td>
               </tr>
               <tr>
                 <td style="padding: 8px 0; font-weight: bold; color: #555;">Phone:</td>
-                <td style="padding: 8px 0; color: #1a1a1a;">${phone.trim()}</td>
+                <td style="padding: 8px 0; color: #1a1a1a;">${escapeHtml(phone.trim())}</td>
               </tr>
               <tr>
                 <td style="padding: 8px 0; font-weight: bold; color: #555;">Property Address:</td>
-                <td style="padding: 8px 0; color: #1a1a1a;">${address.trim()}</td>
+                <td style="padding: 8px 0; color: #1a1a1a;">${escapeHtml(address.trim())}</td>
               </tr>
               ${property_type?.trim() ? `<tr>
                 <td style="padding: 8px 0; font-weight: bold; color: #555;">Property Type:</td>
-                <td style="padding: 8px 0; color: #1a1a1a;">${property_type.trim()}</td>
+                <td style="padding: 8px 0; color: #1a1a1a;">${escapeHtml(property_type.trim())}</td>
               </tr>` : ""}
               ${bedrooms?.trim() ? `<tr>
                 <td style="padding: 8px 0; font-weight: bold; color: #555;">Bedrooms:</td>
-                <td style="padding: 8px 0; color: #1a1a1a;">${bedrooms.trim()}</td>
+                <td style="padding: 8px 0; color: #1a1a1a;">${escapeHtml(bedrooms.trim())}</td>
               </tr>` : ""}
               ${situation?.trim() ? `<tr>
                 <td style="padding: 8px 0; font-weight: bold; color: #555;">Situation:</td>
-                <td style="padding: 8px 0; color: #1a1a1a;">${situation.trim()}</td>
+                <td style="padding: 8px 0; color: #1a1a1a;">${escapeHtml(situation.trim())}</td>
               </tr>` : ""}
             </table>
             ${message?.trim() ? `
             <div style="margin-top: 20px; padding: 15px; background: #f8f8f6; border-radius: 8px;">
               <p style="font-weight: bold; color: #555; margin: 0 0 8px 0;">Additional Information:</p>
-              <p style="color: #1a1a1a; margin: 0; white-space: pre-wrap;">${message.trim()}</p>
+              <p style="color: #1a1a1a; margin: 0; white-space: pre-wrap;">${escapeHtml(message.trim())}</p>
             </div>` : ""}
             <p style="margin-top: 20px; font-size: 12px; color: #999;">
-              You can reply directly to this email to respond to ${name.trim()}.
+              You can reply directly to this email to respond to ${escapeHtml(name.trim())}.
             </p>
           </div>
         `,

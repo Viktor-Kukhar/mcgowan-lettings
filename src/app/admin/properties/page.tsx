@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { supabase } from "@/lib/supabase";
+import { deleteProperty as deletePropertyAction } from "@/app/actions/admin";
 
 interface Property {
   id: string;
@@ -69,22 +70,9 @@ export default function AdminPropertiesPage() {
       return;
     }
 
-    // Remove images from storage
-    if (property.images?.length) {
-      for (const url of property.images) {
-        const path = url.split("/property-images/")[1];
-        if (path) {
-          await supabase.storage.from("property-images").remove([path]);
-        }
-      }
-    }
+    const result = await deletePropertyAction(property.id, property.images || []);
 
-    const { error } = await supabase
-      .from("properties")
-      .delete()
-      .eq("id", property.id);
-
-    if (error) {
+    if (!result.success) {
       setMessage({ text: "Failed to delete property.", type: "error" });
     } else {
       setProperties((prev) => prev.filter((p) => p.id !== property.id));

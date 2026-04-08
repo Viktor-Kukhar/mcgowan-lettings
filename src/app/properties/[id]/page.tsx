@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import { Metadata } from "next";
 import { supabaseAdmin } from "@/lib/supabase-server";
 import PropertyGallery from "./PropertyGallery";
 import ExpandableDescription from "./ExpandableDescription";
@@ -19,6 +20,44 @@ import {
 type Props = {
   params: Promise<{ id: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
+
+  const { data: property } = await supabaseAdmin
+    .from("properties")
+    .select("title, location, price, beds, baths, type, images, description")
+    .eq("id", id)
+    .single();
+
+  if (!property) {
+    return { title: "Property Not Found | McGowan Lettings" };
+  }
+
+  const title = `${property.title} | McGowan Lettings`;
+  const description =
+    property.description?.slice(0, 160) ||
+    `${property.beds} bed ${property.type?.toLowerCase() || "property"} to rent in ${property.location} — £${property.price?.toLocaleString()}/pcm. View details and book a viewing with McGowan Lettings.`;
+  const images: string[] = property.images ?? [];
+  const ogImage = images[0] || "/hero.jpg";
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: [{ url: ogImage, width: 1200, height: 630 }],
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [ogImage],
+    },
+  };
+}
 
 export default async function PropertyDetailPage({ params }: Props) {
   const { id } = await params;

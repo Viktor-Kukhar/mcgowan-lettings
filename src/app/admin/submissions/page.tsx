@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
+import { deleteSubmission as deleteSubmissionAction } from "@/app/actions/admin";
 
 interface Submission {
   id: string;
@@ -87,13 +88,10 @@ export default function AdminSubmissionsPage() {
   const deleteSubmission = async (id: string) => {
     if (!confirm("Delete this submission?")) return;
 
-    const { error } = await supabase
-      .from("contact_submissions")
-      .delete()
-      .eq("id", id);
+    const result = await deleteSubmissionAction(id);
 
-    if (error) {
-      setMessage({ text: "Failed to delete submission.", type: "error" });
+    if (!result.success) {
+      setMessage({ text: result.error || "Failed to delete submission.", type: "error" });
     } else {
       setSubmissions((prev) => prev.filter((s) => s.id !== id));
       if (expandedId === id) setExpandedId(null);

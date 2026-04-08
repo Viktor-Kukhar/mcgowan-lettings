@@ -5,6 +5,15 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 type ContactResult =
   | { success: true }
   | { success: false; error: string };
@@ -51,10 +60,10 @@ export async function submitContactForm(formData: {
     // Send email notification to David
     try {
       await resend.emails.send({
-        from: "McGowan Lettings <onboarding@resend.dev>",
+        from: "McGowan Lettings <notifications@mcgowanlettings.co.uk>",
         to: "info@mcgowanlettings.co.uk",
         replyTo: email.trim(),
-        subject: `New ${type || "General"} Enquiry from ${name.trim()}`,
+        subject: `New ${escapeHtml(type || "General")} Enquiry from ${escapeHtml(name.trim())}`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h2 style="color: #1a1a1a; border-bottom: 2px solid #abd300; padding-bottom: 10px;">
@@ -63,27 +72,27 @@ export async function submitContactForm(formData: {
             <table style="width: 100%; border-collapse: collapse;">
               <tr>
                 <td style="padding: 8px 0; font-weight: bold; color: #555; width: 120px;">Name:</td>
-                <td style="padding: 8px 0; color: #1a1a1a;">${name.trim()}</td>
+                <td style="padding: 8px 0; color: #1a1a1a;">${escapeHtml(name.trim())}</td>
               </tr>
               <tr>
                 <td style="padding: 8px 0; font-weight: bold; color: #555;">Email:</td>
-                <td style="padding: 8px 0; color: #1a1a1a;">${email.trim()}</td>
+                <td style="padding: 8px 0; color: #1a1a1a;">${escapeHtml(email.trim())}</td>
               </tr>
               ${phone?.trim() ? `<tr>
                 <td style="padding: 8px 0; font-weight: bold; color: #555;">Phone:</td>
-                <td style="padding: 8px 0; color: #1a1a1a;">${phone.trim()}</td>
+                <td style="padding: 8px 0; color: #1a1a1a;">${escapeHtml(phone.trim())}</td>
               </tr>` : ""}
               <tr>
                 <td style="padding: 8px 0; font-weight: bold; color: #555;">Type:</td>
-                <td style="padding: 8px 0; color: #1a1a1a;">${type || "General"}</td>
+                <td style="padding: 8px 0; color: #1a1a1a;">${escapeHtml(type || "General")}</td>
               </tr>
             </table>
             <div style="margin-top: 20px; padding: 15px; background: #f8f8f6; border-radius: 8px;">
               <p style="font-weight: bold; color: #555; margin: 0 0 8px 0;">Message:</p>
-              <p style="color: #1a1a1a; margin: 0; white-space: pre-wrap;">${message.trim()}</p>
+              <p style="color: #1a1a1a; margin: 0; white-space: pre-wrap;">${escapeHtml(message.trim())}</p>
             </div>
             <p style="margin-top: 20px; font-size: 12px; color: #999;">
-              You can reply directly to this email to respond to ${name.trim()}.
+              You can reply directly to this email to respond to ${escapeHtml(name.trim())}.
             </p>
           </div>
         `,

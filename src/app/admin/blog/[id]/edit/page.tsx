@@ -6,6 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { supabase } from "@/lib/supabase";
 import { compressImage } from "@/lib/compress-image";
+import { deleteBlogPost as deleteBlogPostAction } from "@/app/actions/admin";
 
 function generateSlug(title: string): string {
   return title
@@ -182,21 +183,10 @@ export default function EditBlogPostPage() {
 
     setDeleting(true);
 
-    // Remove cover image from storage
-    if (coverImage) {
-      const path = coverImage.split("/property-images/")[1];
-      if (path) {
-        await supabase.storage.from("property-images").remove([path]);
-      }
-    }
+    const result = await deleteBlogPostAction(id, coverImage || null);
 
-    const { error: deleteError } = await supabase
-      .from("blog_posts")
-      .delete()
-      .eq("id", id);
-
-    if (deleteError) {
-      setError(deleteError.message);
+    if (!result.success) {
+      setError(result.error);
       setDeleting(false);
       return;
     }
