@@ -20,6 +20,10 @@ html {
   scroll-behavior: smooth;
 }
 
+a, button, [role="button"], input[type="submit"], input[type="button"], select, summary {
+  cursor: pointer;
+}
+
 body {
   font-family: var(--font-body), system-ui, sans-serif;
   color: var(--color-text);
@@ -82,4 +86,12 @@ body {
 /* Logo orb gradient */
 .orb-gradient {
   background: radial-gradient(circle at 40% 35%, #c8e84a 0%, #8cc614 35%, #5a9a0a 70%, #3d7a08 100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
