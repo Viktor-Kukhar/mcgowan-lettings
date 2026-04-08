@@ -77,7 +77,7 @@ export default function AdminLayout({
   };
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex min-h-screen flex-col lg:h-screen lg:flex-row bg-gray-50">
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
@@ -153,9 +153,9 @@ export default function AdminLayout({
       </aside>
 
       {/* Main content */}
-      <div className="flex flex-1 flex-col overflow-hidden">
+      <div className="flex flex-1 flex-col lg:overflow-hidden">
         {/* Top bar */}
-        <header className="flex h-16 items-center gap-4 border-b border-gray-200 bg-white px-6">
+        <header className="sticky top-0 z-20 flex h-16 items-center gap-4 border-b border-gray-200 bg-white px-4 sm:px-6">
           <button
             onClick={() => setSidebarOpen(true)}
             className="lg:hidden text-text-muted hover:text-dark"
@@ -175,7 +175,7 @@ export default function AdminLayout({
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto p-6">{children}</main>
+        <main className="flex-1 lg:overflow-y-auto p-4 sm:p-6">{children}</main>
       </div>
     </div>
   );
