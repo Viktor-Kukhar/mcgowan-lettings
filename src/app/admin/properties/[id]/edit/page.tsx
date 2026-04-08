@@ -111,7 +111,13 @@ export default function EditPropertyPage() {
     const newUrls: string[] = [];
 
     for (const rawFile of Array.from(files)) {
-      const file = await compressImage(rawFile);
+      let file: File;
+      try {
+        file = await compressImage(rawFile);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to process image.");
+        continue;
+      }
       const fileExt = file.name.split(".").pop();
       const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${fileExt}`;
       const filePath = `properties/${fileName}`;
@@ -503,7 +509,7 @@ export default function EditPropertyPage() {
                 <span className="text-sm text-text-muted">Upload EPC (PDF or image)</span>
                 <input
                   type="file"
-                  accept=".pdf,image/*"
+                  accept=".pdf,image/jpeg,image/png,image/webp"
                   className="hidden"
                   onChange={async (e) => {
                     const file = e.target.files?.[0];
@@ -623,7 +629,7 @@ export default function EditPropertyPage() {
             </div>
             <input
               type="file"
-              accept="image/*"
+              accept="image/jpeg,image/png,image/webp"
               multiple
               onChange={handleImageUpload}
               disabled={uploading || (!storage.loading && storage.percentage >= 95)}

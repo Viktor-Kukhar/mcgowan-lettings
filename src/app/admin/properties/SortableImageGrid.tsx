@@ -70,7 +70,7 @@ export default function SortableImageGrid({ images, onReorder, onRemove }: Props
           <button
             type="button"
             onClick={() => onRemove(index)}
-            className="absolute right-1.5 top-1.5 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:bg-black/80"
+            className="absolute right-1.5 top-1.5 flex h-8 w-8 items-center justify-center rounded-full bg-black/60 text-white opacity-100 sm:opacity-0 transition-opacity group-hover:opacity-100 hover:bg-black/80"
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -78,12 +78,12 @@ export default function SortableImageGrid({ images, onReorder, onRemove }: Props
           </button>
           {/* Main badge */}
           {index === 0 && (
-            <span className="absolute left-1.5 top-1.5 rounded bg-brand px-1.5 py-0.5 text-[10px] font-semibold text-dark">
+            <span className="absolute left-1.5 top-1.5 rounded bg-brand px-1.5 py-0.5 text-xs font-semibold text-dark">
               Main
             </span>
           )}
           {/* Drag handle hint */}
-          <div className="absolute bottom-1.5 left-1.5 flex items-center gap-1 rounded bg-black/50 px-1.5 py-0.5 text-[10px] text-white opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="absolute bottom-1.5 left-1.5 flex items-center gap-1 rounded bg-black/50 px-1.5 py-0.5 text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity">
             <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
             </svg>

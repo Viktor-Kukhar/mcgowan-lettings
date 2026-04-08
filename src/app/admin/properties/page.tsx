@@ -332,7 +332,7 @@ export default function AdminPropertiesPage() {
                       {property.area} &middot; {property.beds} bed &middot;{" "}
                       &pound;{property.price.toLocaleString()}/mo
                     </p>
-                    <div className="mt-2 flex items-center gap-4">
+                    <div className="mt-2 flex flex-wrap items-center gap-3 sm:gap-4">
                       <button
                         onClick={() =>
                           toggleActive(property.id, property.active)

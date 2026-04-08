@@ -250,7 +250,7 @@ export default function AdminSubmissionsPage() {
                           >
                             {submission.name}
                           </span>
-                          <span className="rounded bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-text-muted uppercase">
+                          <span className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-medium text-text-muted uppercase">
                             {submission.type}
                           </span>
                         </div>

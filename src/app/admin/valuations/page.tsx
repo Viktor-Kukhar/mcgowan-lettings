@@ -260,12 +260,12 @@ export default function AdminValuationsPage() {
                             {request.name}
                           </span>
                           {request.property_type && (
-                            <span className="rounded bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-text-muted uppercase">
+                            <span className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-medium text-text-muted uppercase">
                               {request.property_type}
                             </span>
                           )}
                           {request.bedrooms && (
-                            <span className="rounded bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-text-muted">
+                            <span className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-medium text-text-muted">
                               {request.bedrooms} bed
                             </span>
                           )}

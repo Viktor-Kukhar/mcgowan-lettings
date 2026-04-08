@@ -84,7 +84,14 @@ export default function EditBlogPostPage() {
     setUploading(true);
     setError("");
 
-    const compressed = await compressImage(file);
+    let compressed: File;
+    try {
+      compressed = await compressImage(file);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to process image.");
+      setUploading(false);
+      return;
+    }
     const fileExt = compressed.name.split(".").pop();
     const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${fileExt}`;
     const filePath = `blog/${fileName}`;
@@ -358,7 +365,7 @@ export default function EditBlogPostPage() {
               </div>
               <input
                 type="file"
-                accept="image/*"
+                accept="image/jpeg,image/png,image/webp"
                 onChange={handleCoverUpload}
                 disabled={uploading}
                 className="hidden"

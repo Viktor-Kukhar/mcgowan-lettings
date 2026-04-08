@@ -2,9 +2,26 @@ const MAX_WIDTH = 1920;
 const MAX_HEIGHT = 1920;
 const QUALITY = 0.8;
 
+const SUPPORTED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+
 export async function compressImage(file: File): Promise<File> {
-  // Skip non-image files
-  if (!file.type.startsWith("image/")) return file;
+  // Reject unsupported formats (e.g. HEIC from iPhones)
+  if (!SUPPORTED_TYPES.includes(file.type) && !file.type.startsWith("image/")) {
+    return file;
+  }
+
+  // Check for HEIC/HEIF — these won't render in most browsers
+  if (
+    file.type === "image/heic" ||
+    file.type === "image/heic-sequence" ||
+    file.type === "image/heif" ||
+    file.name.toLowerCase().endsWith(".heic") ||
+    file.name.toLowerCase().endsWith(".heif")
+  ) {
+    throw new Error(
+      "HEIC format is not supported. Please change your iPhone camera settings to \"Most Compatible\" (Settings → Camera → Formats), or select a JPG/PNG file."
+    );
+  }
 
   // Skip if already small (under 500KB)
   if (file.size < 500 * 1024) return file;
