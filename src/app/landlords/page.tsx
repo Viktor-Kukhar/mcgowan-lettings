@@ -2,6 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { AnimateIn } from "@/components/AnimateIn";
 import LogoRow from "@/components/LogoRow";
+
+export const revalidate = 3600;
 import {
   ShieldIcon,
   KeyIcon,

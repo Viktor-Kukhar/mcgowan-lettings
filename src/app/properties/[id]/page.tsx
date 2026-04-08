@@ -3,6 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Metadata } from "next";
 import { supabaseAdmin } from "@/lib/supabase-server";
+
+export const revalidate = 3600;
 import PropertyGallery from "./PropertyGallery";
 import ExpandableDescription from "./ExpandableDescription";
 import {
