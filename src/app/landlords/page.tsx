@@ -199,7 +199,7 @@ export default function LandlordsPage() {
                   ))}
                 </ul>
                 <Link
-                  href="/contact"
+                  href="/valuation"
                   className="inline-flex items-center justify-center gap-2 bg-brand text-dark font-semibold px-6 py-3 rounded-sm hover:bg-brand-light transition-all duration-200 text-sm w-full md:w-auto"
                 >
                   Get a Free Valuation
@@ -389,7 +389,7 @@ export default function LandlordsPage() {
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
-                href="/contact"
+                href="/valuation"
                 className="inline-flex items-center gap-2 bg-brand text-dark font-semibold px-8 py-3.5 rounded-sm hover:bg-brand-light transition-colors"
               >
                 Request a Free Valuation

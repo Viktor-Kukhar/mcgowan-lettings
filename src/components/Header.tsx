@@ -9,6 +9,7 @@ import { MenuIcon, CloseIcon } from "./Icons";
 const NAV_LINKS = [
   { label: "Landlords", href: "/landlords" },
   { label: "Properties", href: "/properties" },
+  { label: "Areas", href: "/areas" },
   { label: "Tenants", href: "/tenants" },
   { label: "Contact", href: "/contact" },
 ];
@@ -38,7 +39,7 @@ export default function Header() {
               key={link.label}
               href={link.href}
               className={`text-sm transition-colors duration-200 tracking-wide ${
-                pathname === link.href
+                pathname === link.href || pathname.startsWith(link.href + "/")
                   ? "text-white font-medium"
                   : "text-white/70 hover:text-white"
               }`}
@@ -47,7 +48,7 @@ export default function Header() {
             </Link>
           ))}
           <Link
-            href="/contact"
+            href="/valuation"
             className="text-sm font-semibold bg-brand text-dark px-5 py-2 rounded-sm hover:bg-brand-light transition-colors duration-200"
           >
             Free Valuation
@@ -74,7 +75,7 @@ export default function Header() {
                 href={link.href}
                 onClick={() => setMobileMenuOpen(false)}
                 className={`py-3 border-b border-white/5 text-sm tracking-wide transition-colors ${
-                  pathname === link.href
+                  pathname === link.href || pathname.startsWith(link.href + "/")
                     ? "text-white font-medium"
                     : "text-white/70 hover:text-white"
                 }`}
@@ -83,7 +84,7 @@ export default function Header() {
               </Link>
             ))}
             <Link
-              href="/contact"
+              href="/valuation"
               onClick={() => setMobileMenuOpen(false)}
               className="mt-3 text-center text-sm font-semibold bg-brand text-dark px-5 py-3 rounded-sm"
             >

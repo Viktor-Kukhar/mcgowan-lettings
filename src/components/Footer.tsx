@@ -46,10 +46,17 @@ export default function Footer() {
           <div>
             <h4 className="text-white font-semibold text-sm mb-4">Areas</h4>
             <ul className="space-y-2.5">
-              {["Bury", "Bolton", "Manchester", "Rossendale", "Accrington", "Burnley"].map((area) => (
-                <li key={area}>
-                  <Link href={`/properties?area=${area}`} className="text-white/40 hover:text-white text-sm transition-colors">
-                    {area}
+              {[
+                { name: "Bury", slug: "bury" },
+                { name: "Bolton", slug: "bolton" },
+                { name: "Manchester", slug: "manchester" },
+                { name: "Rossendale", slug: "rossendale" },
+                { name: "Accrington", slug: "accrington" },
+                { name: "Burnley", slug: "burnley" },
+              ].map((area) => (
+                <li key={area.slug}>
+                  <Link href={`/areas/${area.slug}`} className="text-white/40 hover:text-white text-sm transition-colors">
+                    {area.name}
                   </Link>
                 </li>
               ))}

@@ -811,7 +811,7 @@ export default function HomePage() {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
-              href="/contact"
+              href="/valuation"
               className="bg-dark text-white font-semibold px-8 py-3.5 rounded-sm hover:bg-dark-soft transition-colors duration-200 text-sm flex items-center gap-2"
             >
               Request Free Valuation
