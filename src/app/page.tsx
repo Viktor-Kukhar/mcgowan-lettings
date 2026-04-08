@@ -398,7 +398,7 @@ export default function HomePage() {
 
           <AnimateIn delay={0.15} className="grid md:grid-cols-2 gap-6">
             {/* Fully Managed */}
-            <div className="bg-white rounded-lg p-8 md:p-10 border border-black/5 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group cursor-pointer relative overflow-hidden">
+            <div className="bg-white rounded-lg p-8 md:p-10 border border-black/5 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden">
               <div className="absolute top-0 left-0 h-[3px] w-0 bg-brand group-hover:w-full transition-all duration-500 ease-out" />
               <div>
                 <div className="w-12 h-12 bg-brand/10 rounded-lg flex items-center justify-center mb-6">
@@ -427,7 +427,7 @@ export default function HomePage() {
                     </li>
                   ))}
                 </ul>
-                <Link href="/landlords" className="inline-flex items-center gap-2 text-sm font-semibold text-dark group/link">
+                <Link href="/landlords" className="inline-flex items-center gap-2 text-sm font-semibold text-brand-dark hover:text-brand transition-colors group/link">
                   Learn more
                   <ArrowRightIcon className="w-3.5 h-3.5 group-hover/link:translate-x-1 transition-transform" />
                 </Link>
@@ -435,7 +435,7 @@ export default function HomePage() {
             </div>
 
             {/* Let Only */}
-            <div className="bg-white rounded-lg p-8 md:p-10 border border-black/5 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group cursor-pointer relative overflow-hidden">
+            <div className="bg-white rounded-lg p-8 md:p-10 border border-black/5 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden">
               <div className="absolute top-0 left-0 h-[3px] w-0 bg-brand group-hover:w-full transition-all duration-500 ease-out" />
               <div>
                 <div className="w-12 h-12 bg-dark/5 rounded-lg flex items-center justify-center mb-6">
@@ -461,7 +461,7 @@ export default function HomePage() {
                     </li>
                   ))}
                 </ul>
-                <Link href="/landlords" className="inline-flex items-center gap-2 text-sm font-semibold text-dark group/link">
+                <Link href="/landlords" className="inline-flex items-center gap-2 text-sm font-semibold text-brand-dark hover:text-brand transition-colors group/link">
                   Learn more
                   <ArrowRightIcon className="w-3.5 h-3.5 group-hover/link:translate-x-1 transition-transform" />
                 </Link>

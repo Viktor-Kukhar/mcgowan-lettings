@@ -243,7 +243,7 @@ export default function ContactPage() {
                   <h2 className="font-heading text-2xl md:text-3xl font-semibold text-dark mb-2">
                     Send Us a Message
                   </h2>
-                  <p className="text-text-muted font-body text-sm mb-8">
+                  <p className="text-text-muted  text-sm mb-8">
                     Fill in the form below and David will get back to you as
                     soon as possible.
                   </p>
@@ -256,7 +256,7 @@ export default function ContactPage() {
                       <h3 className="font-heading text-xl text-dark mb-2">
                         Message Sent
                       </h3>
-                      <p className="text-text-muted font-body text-sm max-w-sm mx-auto">
+                      <p className="text-text-muted  text-sm max-w-sm mx-auto">
                         Thank you for getting in touch. David will respond to
                         your enquiry shortly.
                       </p>
@@ -267,7 +267,7 @@ export default function ContactPage() {
                       <div>
                         <label
                           htmlFor="name"
-                          className="block text-xs font-body font-medium text-dark mb-1.5 uppercase tracking-wider"
+                          className="block text-xs font-medium text-dark mb-1.5 uppercase tracking-wider"
                         >
                           Name
                         </label>
@@ -279,7 +279,7 @@ export default function ContactPage() {
                           onChange={(e) =>
                             setFormData({ ...formData, name: e.target.value })
                           }
-                          className="w-full border border-black/10 rounded-md px-4 py-2.5 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/20 transition-colors bg-white font-body"
+                          className="w-full border border-black/10 rounded-md px-4 py-2.5 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/20 transition-colors bg-white "
                           placeholder="Your full name"
                         />
                       </div>
@@ -289,7 +289,7 @@ export default function ContactPage() {
                         <div>
                           <label
                             htmlFor="phone"
-                            className="block text-xs font-body font-medium text-dark mb-1.5 uppercase tracking-wider"
+                            className="block text-xs font-medium text-dark mb-1.5 uppercase tracking-wider"
                           >
                             Phone
                           </label>
@@ -303,14 +303,14 @@ export default function ContactPage() {
                                 phone: e.target.value,
                               })
                             }
-                            className="w-full border border-black/10 rounded-md px-4 py-2.5 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/20 transition-colors bg-white font-body"
+                            className="w-full border border-black/10 rounded-md px-4 py-2.5 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/20 transition-colors bg-white "
                             placeholder="07123 456789"
                           />
                         </div>
                         <div>
                           <label
                             htmlFor="email"
-                            className="block text-xs font-body font-medium text-dark mb-1.5 uppercase tracking-wider"
+                            className="block text-xs font-medium text-dark mb-1.5 uppercase tracking-wider"
                           >
                             Email
                           </label>
@@ -325,7 +325,7 @@ export default function ContactPage() {
                                 email: e.target.value,
                               })
                             }
-                            className="w-full border border-black/10 rounded-md px-4 py-2.5 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/20 transition-colors bg-white font-body"
+                            className="w-full border border-black/10 rounded-md px-4 py-2.5 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/20 transition-colors bg-white "
                             placeholder="you@example.com"
                           />
                         </div>
@@ -335,7 +335,7 @@ export default function ContactPage() {
                       <div>
                         <label
                           htmlFor="enquiryType"
-                          className="block text-xs font-body font-medium text-dark mb-1.5 uppercase tracking-wider"
+                          className="block text-xs font-medium text-dark mb-1.5 uppercase tracking-wider"
                         >
                           I am a&hellip;
                         </label>
@@ -350,7 +350,7 @@ export default function ContactPage() {
                                 enquiryType: e.target.value,
                               })
                             }
-                            className="w-full appearance-none border border-black/10 rounded-md px-4 py-2.5 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/20 transition-colors bg-white font-body pr-10"
+                            className="w-full appearance-none border border-black/10 rounded-md px-4 py-2.5 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/20 transition-colors bg-white  pr-10"
                           >
                             <option value="" disabled>
                               Select an option
@@ -383,7 +383,7 @@ export default function ContactPage() {
                       <div>
                         <label
                           htmlFor="message"
-                          className="block text-xs font-body font-medium text-dark mb-1.5 uppercase tracking-wider"
+                          className="block text-xs font-medium text-dark mb-1.5 uppercase tracking-wider"
                         >
                           Message
                         </label>
@@ -398,7 +398,7 @@ export default function ContactPage() {
                               message: e.target.value,
                             })
                           }
-                          className="w-full border border-black/10 rounded-md px-4 py-2.5 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/20 transition-colors bg-white font-body resize-none"
+                          className="w-full border border-black/10 rounded-md px-4 py-2.5 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/20 transition-colors bg-white  resize-none"
                           placeholder="How can we help?"
                         />
                       </div>
@@ -412,7 +412,7 @@ export default function ContactPage() {
                       <button
                         type="submit"
                         disabled={submitting}
-                        className="inline-flex items-center gap-2 bg-brand text-dark font-body font-semibold text-sm px-8 py-3 rounded-md hover:bg-brand-dark transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                        className="inline-flex items-center gap-2 bg-brand text-dark font-semibold px-8 py-3.5 rounded-sm hover:bg-brand-light transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                       >
                         {submitting ? "Sending..." : "Send Message"}
                         {!submitting && <ArrowRightIcon className="w-4 h-4" />}
@@ -474,7 +474,7 @@ export default function ContactPage() {
                 <h3 className="font-heading text-xl md:text-2xl text-white">
                   Leave Us a Google Review
                 </h3>
-                <p className="text-white/50 font-body text-sm mt-1">
+                <p className="text-white/50  text-sm mt-1">
                   Your feedback helps other landlords and tenants find us.
                 </p>
               </div>
@@ -485,7 +485,7 @@ export default function ContactPage() {
               href={GOOGLE_REVIEW_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-brand text-dark font-body font-semibold text-sm px-8 py-3 rounded-md hover:bg-brand-dark transition-colors whitespace-nowrap"
+              className="inline-flex items-center gap-2 bg-brand text-dark font-semibold px-8 py-3.5 rounded-sm hover:bg-brand-light transition-colors whitespace-nowrap"
             >
               Write a Review
               <ArrowRightIcon className="w-4 h-4" />

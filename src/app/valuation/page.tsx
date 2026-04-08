@@ -175,7 +175,7 @@ export default function ValuationPage() {
                   <h3 className="font-heading text-xl text-dark mb-2">
                     Valuation Requested
                   </h3>
-                  <p className="text-text-muted font-body text-sm max-w-sm mx-auto">
+                  <p className="text-text-muted  text-sm max-w-sm mx-auto">
                     Thank you! David will be in touch within 24 hours.
                   </p>
                 </div>
@@ -185,7 +185,7 @@ export default function ValuationPage() {
                   <div>
                     <label
                       htmlFor="name"
-                      className="block text-xs font-body font-medium text-dark mb-1.5 uppercase tracking-wider"
+                      className="block text-xs font-medium text-dark mb-1.5 uppercase tracking-wider"
                     >
                       Name *
                     </label>
@@ -197,7 +197,7 @@ export default function ValuationPage() {
                       onChange={(e) =>
                         setFormData({ ...formData, name: e.target.value })
                       }
-                      className="w-full border border-black/10 rounded-md px-4 py-2.5 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/20 transition-colors bg-white font-body"
+                      className="w-full border border-black/10 rounded-md px-4 py-2.5 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/20 transition-colors bg-white "
                       placeholder="Your full name"
                     />
                   </div>
@@ -207,7 +207,7 @@ export default function ValuationPage() {
                     <div>
                       <label
                         htmlFor="email"
-                        className="block text-xs font-body font-medium text-dark mb-1.5 uppercase tracking-wider"
+                        className="block text-xs font-medium text-dark mb-1.5 uppercase tracking-wider"
                       >
                         Email *
                       </label>
@@ -219,14 +219,14 @@ export default function ValuationPage() {
                         onChange={(e) =>
                           setFormData({ ...formData, email: e.target.value })
                         }
-                        className="w-full border border-black/10 rounded-md px-4 py-2.5 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/20 transition-colors bg-white font-body"
+                        className="w-full border border-black/10 rounded-md px-4 py-2.5 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/20 transition-colors bg-white "
                         placeholder="you@example.com"
                       />
                     </div>
                     <div>
                       <label
                         htmlFor="phone"
-                        className="block text-xs font-body font-medium text-dark mb-1.5 uppercase tracking-wider"
+                        className="block text-xs font-medium text-dark mb-1.5 uppercase tracking-wider"
                       >
                         Phone *
                       </label>
@@ -238,7 +238,7 @@ export default function ValuationPage() {
                         onChange={(e) =>
                           setFormData({ ...formData, phone: e.target.value })
                         }
-                        className="w-full border border-black/10 rounded-md px-4 py-2.5 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/20 transition-colors bg-white font-body"
+                        className="w-full border border-black/10 rounded-md px-4 py-2.5 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/20 transition-colors bg-white "
                         placeholder="07123 456789"
                       />
                     </div>
@@ -248,7 +248,7 @@ export default function ValuationPage() {
                   <div>
                     <label
                       htmlFor="address"
-                      className="block text-xs font-body font-medium text-dark mb-1.5 uppercase tracking-wider"
+                      className="block text-xs font-medium text-dark mb-1.5 uppercase tracking-wider"
                     >
                       Property Address *
                     </label>
@@ -260,7 +260,7 @@ export default function ValuationPage() {
                       onChange={(e) =>
                         setFormData({ ...formData, address: e.target.value })
                       }
-                      className="w-full border border-black/10 rounded-md px-4 py-2.5 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/20 transition-colors bg-white font-body"
+                      className="w-full border border-black/10 rounded-md px-4 py-2.5 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/20 transition-colors bg-white "
                       placeholder="Full address of the property"
                     />
                   </div>
@@ -270,7 +270,7 @@ export default function ValuationPage() {
                     <div>
                       <label
                         htmlFor="propertyType"
-                        className="block text-xs font-body font-medium text-dark mb-1.5 uppercase tracking-wider"
+                        className="block text-xs font-medium text-dark mb-1.5 uppercase tracking-wider"
                       >
                         Property Type
                       </label>
@@ -284,7 +284,7 @@ export default function ValuationPage() {
                               propertyType: e.target.value,
                             })
                           }
-                          className="w-full appearance-none border border-black/10 rounded-md px-4 py-2.5 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/20 transition-colors bg-white font-body pr-10"
+                          className="w-full appearance-none border border-black/10 rounded-md px-4 py-2.5 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/20 transition-colors bg-white  pr-10"
                         >
                           <option value="" disabled>
                             Select type
@@ -315,7 +315,7 @@ export default function ValuationPage() {
                     <div>
                       <label
                         htmlFor="bedrooms"
-                        className="block text-xs font-body font-medium text-dark mb-1.5 uppercase tracking-wider"
+                        className="block text-xs font-medium text-dark mb-1.5 uppercase tracking-wider"
                       >
                         Bedrooms
                       </label>
@@ -329,7 +329,7 @@ export default function ValuationPage() {
                               bedrooms: e.target.value,
                             })
                           }
-                          className="w-full appearance-none border border-black/10 rounded-md px-4 py-2.5 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/20 transition-colors bg-white font-body pr-10"
+                          className="w-full appearance-none border border-black/10 rounded-md px-4 py-2.5 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/20 transition-colors bg-white  pr-10"
                         >
                           <option value="" disabled>
                             Select bedrooms
@@ -363,7 +363,7 @@ export default function ValuationPage() {
                   <div>
                     <label
                       htmlFor="situation"
-                      className="block text-xs font-body font-medium text-dark mb-1.5 uppercase tracking-wider"
+                      className="block text-xs font-medium text-dark mb-1.5 uppercase tracking-wider"
                     >
                       Current Situation
                     </label>
@@ -377,7 +377,7 @@ export default function ValuationPage() {
                             situation: e.target.value,
                           })
                         }
-                        className="w-full appearance-none border border-black/10 rounded-md px-4 py-2.5 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/20 transition-colors bg-white font-body pr-10"
+                        className="w-full appearance-none border border-black/10 rounded-md px-4 py-2.5 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/20 transition-colors bg-white  pr-10"
                       >
                         <option value="" disabled>
                           Select an option
@@ -410,7 +410,7 @@ export default function ValuationPage() {
                   <div>
                     <label
                       htmlFor="message"
-                      className="block text-xs font-body font-medium text-dark mb-1.5 uppercase tracking-wider"
+                      className="block text-xs font-medium text-dark mb-1.5 uppercase tracking-wider"
                     >
                       Additional Information{" "}
                       <span className="text-text-light font-normal normal-case">
@@ -424,7 +424,7 @@ export default function ValuationPage() {
                       onChange={(e) =>
                         setFormData({ ...formData, message: e.target.value })
                       }
-                      className="w-full border border-black/10 rounded-md px-4 py-2.5 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/20 transition-colors bg-white font-body resize-none"
+                      className="w-full border border-black/10 rounded-md px-4 py-2.5 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/20 transition-colors bg-white  resize-none"
                       placeholder="Anything else you'd like us to know about the property?"
                     />
                   </div>
@@ -436,7 +436,7 @@ export default function ValuationPage() {
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="inline-flex items-center gap-2 bg-brand text-dark font-body font-semibold text-sm px-8 py-3 rounded-md hover:bg-brand-dark transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="inline-flex items-center gap-2 bg-brand text-dark font-semibold px-8 py-3.5 rounded-sm hover:bg-brand-light transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                   >
                     {submitting ? "Submitting..." : "Request Free Valuation"}
                     {!submitting && <ArrowRightIcon className="w-4 h-4" />}
@@ -478,7 +478,7 @@ export default function ValuationPage() {
                   <h3 className="font-heading text-lg font-semibold text-dark mb-3">
                     {benefit.title}
                   </h3>
-                  <p className="text-text-muted font-body text-sm leading-relaxed">
+                  <p className="text-text-muted  text-sm leading-relaxed">
                     {benefit.description}
                   </p>
                 </div>

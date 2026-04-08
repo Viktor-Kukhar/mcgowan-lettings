@@ -48,7 +48,7 @@ export default async function BlogPage() {
       </section>
 
       {/* ─── POSTS GRID ─── */}
-      <section className="bg-cream py-20">
+      <section className="bg-cream py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-6">
           {!posts || posts.length === 0 ? (
             <AnimateIn className="text-center py-16">
@@ -63,9 +63,9 @@ export default async function BlogPage() {
                 <AnimateIn key={post.id} delay={i * 0.1}>
                   <Link
                     href={`/blog/${post.slug}`}
-                    className="group block overflow-hidden rounded-lg bg-white border border-black/5 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5"
+                    className="group block overflow-hidden rounded-lg bg-white border border-black/5 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 h-full"
                   >
-                    <div className="relative aspect-[16/9] w-full overflow-hidden bg-gray-100">
+                    <div className="relative aspect-[16/9] w-full overflow-hidden">
                       {post.cover_image ? (
                         <Image
                           src={post.cover_image}
@@ -75,25 +75,15 @@ export default async function BlogPage() {
                           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         />
                       ) : (
-                        <div className="flex h-full items-center justify-center text-gray-300">
-                          <svg
-                            className="h-12 w-12"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            strokeWidth={1}
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
-                            />
+                        <div className="flex h-full items-center justify-center bg-brand/[0.04]">
+                          <svg className="h-12 w-12 text-brand-dark/50" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                           </svg>
                         </div>
                       )}
                     </div>
 
-                    <div className="p-5">
+                    <div className="p-6">
                       <time className="text-xs font-medium text-text-muted uppercase tracking-wider">
                         {new Date(post.created_at).toLocaleDateString("en-GB", {
                           day: "numeric",
@@ -101,15 +91,15 @@ export default async function BlogPage() {
                           year: "numeric",
                         })}
                       </time>
-                      <h2 className="mt-2 font-heading text-lg font-semibold text-dark leading-snug group-hover:text-brand-dark transition-colors">
+                      <h2 className="mt-3 font-heading text-xl font-semibold text-dark leading-snug group-hover:text-brand-dark transition-colors">
                         {post.title}
                       </h2>
                       {post.excerpt && (
-                        <p className="mt-2 text-sm text-text-muted line-clamp-2">
+                        <p className="mt-3 text-sm text-text-muted leading-relaxed line-clamp-3">
                           {post.excerpt}
                         </p>
                       )}
-                      <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-dark">
+                      <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-dark">
                         Read more
                         <svg
                           className="h-4 w-4 transition-transform group-hover:translate-x-0.5"

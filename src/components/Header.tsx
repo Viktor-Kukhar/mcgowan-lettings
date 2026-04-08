@@ -7,10 +7,11 @@ import { usePathname } from "next/navigation";
 import { MenuIcon, CloseIcon } from "./Icons";
 
 const NAV_LINKS = [
-  { label: "Landlords", href: "/landlords" },
   { label: "Properties", href: "/properties" },
-  { label: "Areas", href: "/areas" },
+  { label: "Landlords", href: "/landlords" },
   { label: "Tenants", href: "/tenants" },
+  { label: "Areas", href: "/areas" },
+  { label: "Blog", href: "/blog" },
   { label: "Contact", href: "/contact" },
 ];
 

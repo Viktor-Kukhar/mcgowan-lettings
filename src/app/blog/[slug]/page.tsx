@@ -42,9 +42,22 @@ export default async function BlogPostPage({ params }: Props) {
     notFound();
   }
 
-  const paragraphs = (post.content ?? "")
+  // Parse content blocks — lines starting with ## become headings
+  const blocks = (post.content ?? "")
     .split(/\n\n+/)
-    .filter((p: string) => p.trim());
+    .filter((p: string) => p.trim())
+    .map((block: string) => {
+      const trimmed = block.trim();
+      if (trimmed.startsWith("## ")) {
+        return { text: trimmed.slice(3), isHeading: true };
+      }
+      return { text: trimmed, isHeading: false };
+    });
+
+  const readingTime = Math.max(
+    1,
+    Math.ceil((post.content ?? "").split(/\s+/).length / 220)
+  );
 
   return (
     <>
@@ -72,29 +85,33 @@ export default async function BlogPostPage({ params }: Props) {
               priority
             />
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-dark/90 via-dark/50 to-dark/60" />
+          <div className="absolute inset-0 bg-gradient-to-t from-dark/80 via-dark/40 to-dark/60" />
         </div>
 
         <div className="relative z-10 max-w-4xl mx-auto px-6 pb-10 w-full">
-          <time className="text-brand text-sm font-semibold tracking-[0.15em] uppercase">
-            {new Date(post.created_at).toLocaleDateString("en-GB", {
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-            })}
-          </time>
-          <h1 className="mt-3 font-heading text-3xl md:text-4xl lg:text-5xl font-semibold text-white leading-[1.15]">
+          <div className="flex items-center gap-3 mb-4">
+            <time className="text-brand text-sm font-semibold tracking-[0.15em] uppercase">
+              {new Date(post.created_at).toLocaleDateString("en-GB", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })}
+            </time>
+            <span className="w-1 h-1 rounded-full bg-white/40" />
+            <span className="text-white/50 text-sm">{readingTime} min read</span>
+          </div>
+          <h1 className="font-heading text-3xl md:text-4xl lg:text-5xl font-semibold text-white leading-[1.15]">
             {post.title}
           </h1>
         </div>
       </section>
 
-      {/* ─── BREADCRUMB + CONTENT ─── */}
-      <section className="bg-cream py-12 md:py-16">
+      {/* ─── CONTENT ─── */}
+      <section className="bg-cream py-16 md:py-24">
         <div className="max-w-3xl mx-auto px-6">
           {/* Breadcrumb */}
           <AnimateIn>
-            <nav className="mb-8 flex items-center gap-2 text-sm text-text-muted">
+            <nav className="mb-10 flex items-center gap-2 text-sm text-text-muted">
               <Link href="/" className="hover:text-dark transition-colors">
                 Home
               </Link>
@@ -109,31 +126,72 @@ export default async function BlogPostPage({ params }: Props) {
             </nav>
           </AnimateIn>
 
-          {/* Article content */}
+          {/* Article */}
           <AnimateIn delay={0.1}>
-            <article className="prose-custom">
+            <article>
               {post.excerpt && (
-                <p className="text-lg md:text-xl text-text-muted leading-relaxed mb-8 font-medium">
-                  {post.excerpt}
-                </p>
+                <div className="mb-10 pb-10 border-b border-black/10">
+                  <div className="w-10 h-[3px] bg-brand mb-5" />
+                  <p className="text-xl md:text-2xl text-dark font-heading font-medium leading-snug">
+                    {post.excerpt}
+                  </p>
+                </div>
               )}
 
-              <div className="space-y-5">
-                {paragraphs.map((paragraph: string, i: number) => (
-                  <p
-                    key={i}
-                    className="text-dark/80 leading-relaxed text-[15px] md:text-base"
-                  >
-                    {paragraph.trim()}
-                  </p>
-                ))}
+              <div className="space-y-6">
+                {blocks.map(
+                  (block: { text: string; isHeading: boolean }, i: number) =>
+                    block.isHeading ? (
+                      <h2
+                        key={i}
+                        className="font-heading text-xl md:text-2xl font-semibold text-dark mt-10 first:mt-0 pl-5 border-l-[3px] border-brand"
+                      >
+                        {block.text}
+                      </h2>
+                    ) : (
+                      <p
+                        key={i}
+                        className="text-dark/75 leading-[1.8] text-[15px] md:text-base"
+                      >
+                        {block.text}
+                      </p>
+                    )
+                )}
               </div>
             </article>
           </AnimateIn>
 
+          {/* CTA */}
+          <AnimateIn delay={0.15}>
+            <div className="mt-14 p-8 bg-dark rounded-lg text-center">
+              <p className="text-white/80 text-sm mb-4">
+                Need advice on your rental property?
+              </p>
+              <Link
+                href="/valuation"
+                className="inline-flex items-center gap-2 bg-brand text-dark font-semibold px-8 py-3.5 rounded-sm hover:bg-brand-light transition-colors"
+              >
+                Get a Free Valuation
+                <svg
+                  className="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+                  />
+                </svg>
+              </Link>
+            </div>
+          </AnimateIn>
+
           {/* Back to blog */}
           <AnimateIn delay={0.2}>
-            <div className="mt-12 pt-8 border-t border-black/5">
+            <div className="mt-10 pt-8 border-t border-black/5">
               <Link
                 href="/blog"
                 className="inline-flex items-center gap-2 text-sm font-semibold text-brand-dark hover:text-brand transition-colors"
@@ -151,7 +209,7 @@ export default async function BlogPostPage({ params }: Props) {
                     d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
                   />
                 </svg>
-                Back to blog
+                Back to all posts
               </Link>
             </div>
           </AnimateIn>
