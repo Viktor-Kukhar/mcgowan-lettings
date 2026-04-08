@@ -171,8 +171,10 @@ export default async function PropertyDetailPage({ params }: Props) {
                   <HomeIcon className="w-4 h-4" />
                   <span>{property.type}</span>
                 </div>
-                <span className="text-black/10">|</span>
-                <span>{property.furnished || "Unfurnished"}</span>
+                <div className="flex items-center gap-1.5">
+                  <span className="w-1 h-1 rounded-full bg-text-muted/40" />
+                  <span>{property.furnished || "Unfurnished"}</span>
+                </div>
               </div>
             </div>
           </div>
