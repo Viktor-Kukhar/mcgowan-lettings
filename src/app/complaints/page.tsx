@@ -212,7 +212,7 @@ export default function ComplaintsPage() {
           <div className="space-y-6">
             {STEPS.map((step, i) => (
               <AnimateIn key={step.step} delay={i * 0.08}>
-                <div className="bg-white rounded-lg border border-black/5 p-6 md:p-8 shadow-sm relative overflow-hidden group hover:shadow-lg transition-shadow duration-300">
+                <div className="bg-white rounded-lg border border-black/5 p-4 sm:p-6 md:p-8 shadow-sm relative overflow-hidden group hover:shadow-lg transition-shadow duration-300">
                   <div className="absolute top-0 left-0 h-full w-[3px] bg-brand" />
                   <div className="flex items-start gap-5">
                     <div className="flex-shrink-0">
