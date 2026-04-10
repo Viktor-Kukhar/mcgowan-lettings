@@ -333,7 +333,7 @@ export default function LandlordsPage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {HOW_IT_WORKS.map((item, i) => (
               <AnimateIn key={item.step} delay={i * 0.1}>
-                <div className="bg-white rounded-lg border border-black/5 p-6 h-full relative group hover:shadow-lg transition-shadow duration-300">
+                <div className="bg-white rounded-lg border border-black/5 p-6 h-full relative">
                   <span className="text-5xl font-heading font-bold text-brand/15 absolute top-4 right-5 select-none">
                     {item.step}
                   </span>
@@ -401,7 +401,8 @@ export default function LandlordsPage() {
           <div className="grid md:grid-cols-2 gap-6">
             {/* CMP */}
             <AnimateIn>
-              <div className="bg-white rounded-lg border border-black/5 p-8 md:p-10 shadow-sm text-center h-full flex flex-col">
+              <div className="bg-white rounded-lg border border-black/5 p-8 md:p-10 shadow-sm text-center h-full flex flex-col group hover:shadow-lg hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+                <div className="absolute top-0 left-0 h-[3px] w-0 bg-brand group-hover:w-full transition-all duration-500 ease-out" />
                 <div className="w-14 h-14 bg-brand/10 rounded-full flex items-center justify-center mx-auto mb-5">
                   <ShieldIcon className="w-7 h-7 text-brand-dark" />
                 </div>
@@ -427,7 +428,8 @@ export default function LandlordsPage() {
 
             {/* TPO */}
             <AnimateIn delay={0.15}>
-              <div className="bg-white rounded-lg border border-black/5 p-8 md:p-10 shadow-sm text-center h-full flex flex-col">
+              <div className="bg-white rounded-lg border border-black/5 p-8 md:p-10 shadow-sm text-center h-full flex flex-col group hover:shadow-lg hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+                <div className="absolute top-0 left-0 h-[3px] w-0 bg-brand group-hover:w-full transition-all duration-500 ease-out" />
                 <div className="w-14 h-14 bg-brand/10 rounded-full flex items-center justify-center mx-auto mb-5">
                   <CheckIcon className="w-7 h-7 text-brand-dark" />
                 </div>
