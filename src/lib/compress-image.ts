@@ -1,6 +1,6 @@
-const MAX_WIDTH = 1920;
-const MAX_HEIGHT = 1920;
-const QUALITY = 0.8;
+const MAX_WIDTH = 1600;
+const MAX_HEIGHT = 1600;
+const QUALITY = 0.75;
 
 const SUPPORTED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 
