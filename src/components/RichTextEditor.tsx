@@ -1,6 +1,11 @@
 "use client";
 
-import { useRef } from "react";
+import { useEditor, EditorContent } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import Link from "@tiptap/extension-link";
+import { Placeholder } from "@tiptap/extensions";
+import { useEffect } from "react";
+import { markdownToHtml } from "@/lib/rich-text";
 
 type Props = {
   value: string;
@@ -17,97 +22,121 @@ export default function RichTextEditor({
   placeholder,
   includeHeading = false,
 }: Props) {
-  const ref = useRef<HTMLTextAreaElement>(null);
+  const editor = useEditor({
+    extensions: [
+      StarterKit.configure({
+        heading: includeHeading ? { levels: [2] } : false,
+        bulletList: false,
+        orderedList: false,
+        listItem: false,
+        blockquote: false,
+        codeBlock: false,
+        code: false,
+        horizontalRule: false,
+        strike: false,
+        link: false,
+      }),
+      Link.configure({
+        openOnClick: false,
+        autolink: true,
+        HTMLAttributes: {
+          target: "_blank",
+          rel: "noopener noreferrer",
+          class: "text-brand-dark underline",
+        },
+      }),
+      Placeholder.configure({
+        placeholder: placeholder ?? "",
+      }),
+    ],
+    content: markdownToHtml(value),
+    immediatelyRender: false,
+    onUpdate: ({ editor }) => {
+      const html = editor.getHTML();
+      onChange(html === "<p></p>" ? "" : html);
+    },
+    editorProps: {
+      attributes: {
+        class:
+          "tiptap-content focus:outline-none px-4 py-2.5 text-sm text-dark leading-relaxed",
+      },
+    },
+  });
 
-  const applyChange = (next: string, caretStart: number, caretEnd: number) => {
-    onChange(next);
-    requestAnimationFrame(() => {
-      const ta = ref.current;
-      if (!ta) return;
-      ta.focus();
-      ta.setSelectionRange(caretStart, caretEnd);
-    });
-  };
+  useEffect(() => {
+    if (!editor) return;
+    const incoming = markdownToHtml(value);
+    const current = editor.getHTML();
+    const currentNormalized = current === "<p></p>" ? "" : current;
+    if (incoming !== currentNormalized) {
+      editor.commands.setContent(incoming || "", { emitUpdate: false });
+    }
+  }, [value, editor]);
 
-  const wrap = (marker: string) => {
-    const ta = ref.current;
-    if (!ta) return;
-    const start = ta.selectionStart;
-    const end = ta.selectionEnd;
-    const selected = value.slice(start, end);
-    if (!selected) {
-      // No selection — insert markers and place caret between them
-      const next = value.slice(0, start) + marker + marker + value.slice(end);
-      const pos = start + marker.length;
-      applyChange(next, pos, pos);
+  const openLinkPrompt = () => {
+    if (!editor) return;
+    const prev = (editor.getAttributes("link").href as string | undefined) ?? "";
+    const url = window.prompt("Enter URL (e.g. https://example.com):", prev || "https://");
+    if (url === null) return;
+    if (url.trim() === "") {
+      editor.chain().focus().extendMarkRange("link").unsetLink().run();
       return;
     }
-    const next =
-      value.slice(0, start) + marker + selected + marker + value.slice(end);
-    applyChange(next, start + marker.length, start + marker.length + selected.length);
+    editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
   };
 
-  const insertLinePrefix = (prefix: string) => {
-    const ta = ref.current;
-    if (!ta) return;
-    const start = ta.selectionStart;
-    const before = value.slice(0, start);
-    const lineStart = before.lastIndexOf("\n") + 1;
-    if (value.slice(lineStart).startsWith(prefix)) return;
-    const next = value.slice(0, lineStart) + prefix + value.slice(lineStart);
-    const pos = start + prefix.length;
-    applyChange(next, pos, pos);
-  };
+  const btnClass = (active: boolean) =>
+    `flex h-8 min-w-[2rem] items-center justify-center rounded-md px-2 transition-colors ${
+      active
+        ? "bg-brand/20 text-dark"
+        : "text-dark hover:bg-gray-200 active:bg-gray-300"
+    }`;
 
-  const handleBold = () => wrap("**");
-  const handleItalic = () => wrap("_");
-  const handleHeading = () => insertLinePrefix("## ");
-  const handleLink = () => {
-    const ta = ref.current;
-    if (!ta) return;
-    const start = ta.selectionStart;
-    const end = ta.selectionEnd;
-    const selected = value.slice(start, end);
-    const url = window.prompt("Enter URL (e.g. https://example.com):", "https://");
-    if (!url) return;
-    const linkText = selected || "link text";
-    const replacement = `[${linkText}](${url})`;
-    const next = value.slice(0, start) + replacement + value.slice(end);
-    applyChange(next, start + 1, start + 1 + linkText.length);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (!(e.metaKey || e.ctrlKey) || e.shiftKey || e.altKey) return;
-    if (e.key === "b" || e.key === "B") {
-      e.preventDefault();
-      handleBold();
-    } else if (e.key === "i" || e.key === "I") {
-      e.preventDefault();
-      handleItalic();
-    } else if (e.key === "k" || e.key === "K") {
-      e.preventDefault();
-      handleLink();
-    }
-  };
-
-  const btn =
-    "flex h-8 min-w-[2rem] items-center justify-center rounded-md px-2 text-dark transition-colors hover:bg-gray-200 active:bg-gray-300";
+  const minHeight = `${Math.max(rows, 3) * 1.6}rem`;
 
   return (
     <div>
       <div className="flex items-center gap-0.5 rounded-t-lg border border-b-0 border-gray-300 bg-gray-50 px-1.5 py-1">
         {includeHeading && (
-          <button type="button" onClick={handleHeading} className={btn} title="Heading — adds to start of line" aria-label="Heading">
+          <button
+            type="button"
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => editor?.chain().focus().toggleHeading({ level: 2 }).run()}
+            className={btnClass(editor?.isActive("heading", { level: 2 }) ?? false)}
+            title="Heading"
+            aria-label="Heading"
+          >
             <span className="text-sm font-semibold">H</span>
           </button>
         )}
-        <button type="button" onClick={handleBold} className={btn} title="Bold (Cmd/Ctrl+B)" aria-label="Bold">
+        <button
+          type="button"
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => editor?.chain().focus().toggleBold().run()}
+          className={btnClass(editor?.isActive("bold") ?? false)}
+          title="Bold (Cmd/Ctrl+B)"
+          aria-label="Bold"
+        >
           <span className="text-sm font-bold">B</span>
         </button>
-        <button type="button" onClick={handleItalic} className={btn} title="Italic (Cmd/Ctrl+I)" aria-label="Italic">
+        <button
+          type="button"
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => editor?.chain().focus().toggleItalic().run()}
+          className={btnClass(editor?.isActive("italic") ?? false)}
+          title="Italic (Cmd/Ctrl+I)"
+          aria-label="Italic"
+        >
           <span className="font-serif text-base italic font-semibold">I</span>
         </button>
-        <button type="button" onClick={handleLink} className={btn} title="Link (Cmd/Ctrl+K)" aria-label="Link">
+        <button
+          type="button"
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={openLinkPrompt}
+          className={btnClass(editor?.isActive("link") ?? false)}
+          title="Link (Cmd/Ctrl+K)"
+          aria-label="Link"
+        >
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
           </svg>
@@ -116,15 +145,13 @@ export default function RichTextEditor({
           Select text, then click a button
         </span>
       </div>
-      <textarea
-        ref={ref}
-        rows={rows}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        onKeyDown={handleKeyDown}
-        placeholder={placeholder}
-        className="w-full resize-none rounded-b-lg border border-gray-300 px-4 py-2.5 text-sm text-dark outline-none transition-colors focus:border-brand focus:ring-1 focus:ring-brand"
-      />
+      <div
+        className="rounded-b-lg border border-gray-300 bg-white focus-within:border-brand focus-within:ring-1 focus-within:ring-brand"
+        style={{ minHeight }}
+        onClick={() => editor?.chain().focus().run()}
+      >
+        <EditorContent editor={editor} />
+      </div>
     </div>
   );
 }

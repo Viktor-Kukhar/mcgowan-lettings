@@ -83,6 +83,7 @@ export default async function PropertyDetailPage({ params }: Props) {
     .limit(3);
 
   const images: string[] = property.images ?? [];
+  const videos: string[] = property.videos ?? [];
   const hasImages = images.length > 0;
 
   // Show database features, or sensible defaults for showcase
@@ -157,7 +158,7 @@ export default async function PropertyDetailPage({ params }: Props) {
       {/* ── Gallery — full width ── */}
       <section className="bg-dark pt-16">
         {hasImages ? (
-          <PropertyGallery images={images} title={property.title} />
+          <PropertyGallery images={images} videos={videos} title={property.title} />
         ) : (
           <div className="w-full h-[45vh] md:h-[55vh] max-h-[550px] bg-warm-grey flex items-center justify-center">
             <HomeIcon className="w-16 h-16 text-text-light" />

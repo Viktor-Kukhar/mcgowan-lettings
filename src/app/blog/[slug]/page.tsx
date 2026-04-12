@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase-server";
 import { AnimateIn } from "@/components/AnimateIn";
-import { renderInline } from "@/lib/rich-text";
+import { renderInline, isHtml, sanitizeHtml } from "@/lib/rich-text";
 
 export const revalidate = 60;
 
@@ -55,22 +55,27 @@ export default async function BlogPostPage({ params }: Props) {
     notFound();
   }
 
-  // Parse content blocks — lines starting with ## become headings
-  const blocks = (post.content ?? "")
-    .split(/\n\n+/)
-    .filter((p: string) => p.trim())
-    .map((block: string) => {
-      const trimmed = block.trim();
-      if (trimmed.startsWith("## ")) {
-        return { text: trimmed.slice(3), isHeading: true };
-      }
-      return { text: trimmed, isHeading: false };
-    });
+  const rawContent: string = post.content ?? "";
+  const contentIsHtml = isHtml(rawContent);
 
-  const readingTime = Math.max(
-    1,
-    Math.ceil((post.content ?? "").split(/\s+/).length / 220)
-  );
+  // Parse legacy markdown content blocks — lines starting with ## become headings
+  const blocks = contentIsHtml
+    ? []
+    : rawContent
+        .split(/\n\n+/)
+        .filter((p: string) => p.trim())
+        .map((block: string) => {
+          const trimmed = block.trim();
+          if (trimmed.startsWith("## ")) {
+            return { text: trimmed.slice(3), isHeading: true };
+          }
+          return { text: trimmed, isHeading: false };
+        });
+
+  const wordCount = contentIsHtml
+    ? rawContent.replace(/<[^>]+>/g, " ").split(/\s+/).filter(Boolean).length
+    : rawContent.split(/\s+/).filter(Boolean).length;
+  const readingTime = Math.max(1, Math.ceil(wordCount / 220));
 
   return (
     <>
@@ -151,26 +156,33 @@ export default async function BlogPostPage({ params }: Props) {
                 </div>
               )}
 
-              <div className="space-y-6">
-                {blocks.map(
-                  (block: { text: string; isHeading: boolean }, i: number) =>
-                    block.isHeading ? (
-                      <h2
-                        key={i}
-                        className="font-heading text-xl md:text-2xl font-semibold text-dark mt-10 first:mt-0 pl-5 border-l-[3px] border-brand"
-                      >
-                        {renderInline(block.text)}
-                      </h2>
-                    ) : (
-                      <p
-                        key={i}
-                        className="text-dark/75 leading-[1.8] text-[15px] md:text-base"
-                      >
-                        {renderInline(block.text)}
-                      </p>
-                    )
-                )}
-              </div>
+              {contentIsHtml ? (
+                <div
+                  className="rich-content text-[15px] md:text-base"
+                  dangerouslySetInnerHTML={{ __html: sanitizeHtml(rawContent) }}
+                />
+              ) : (
+                <div className="space-y-6">
+                  {blocks.map(
+                    (block: { text: string; isHeading: boolean }, i: number) =>
+                      block.isHeading ? (
+                        <h2
+                          key={i}
+                          className="font-heading text-xl md:text-2xl font-semibold text-dark mt-10 first:mt-0 pl-5 border-l-[3px] border-brand"
+                        >
+                          {renderInline(block.text)}
+                        </h2>
+                      ) : (
+                        <p
+                          key={i}
+                          className="text-dark/75 leading-[1.8] text-[15px] md:text-base"
+                        >
+                          {renderInline(block.text)}
+                        </p>
+                      )
+                  )}
+                </div>
+              )}
             </article>
           </AnimateIn>
 
