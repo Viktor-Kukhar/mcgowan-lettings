@@ -13,65 +13,41 @@ type Props = {
 };
 
 export async function generateMetadata({ params }: Props) {
-  try {
-    const { slug } = await params;
-    const { data: post } = await supabaseAdmin
-      .from("blog_posts")
-      .select("title, excerpt, cover_image")
-      .eq("slug", slug)
-      .eq("published", true)
-      .single();
+  const { slug } = await params;
+  const { data: post } = await supabaseAdmin
+    .from("blog_posts")
+    .select("title, excerpt, cover_image")
+    .eq("slug", slug)
+    .eq("published", true)
+    .single();
 
-    if (!post) {
-      return { title: "Post Not Found | McGowan Residential Lettings" };
-    }
+  if (!post) {
+    return { title: "Post Not Found | McGowan Residential Lettings" };
+  }
 
-    const title = `${post.title} | McGowan Residential Lettings`;
-    const description = post.excerpt || undefined;
-    const image = post.cover_image || "/hero.jpg";
+  const title = `${post.title} | McGowan Residential Lettings`;
+  const description = post.excerpt || undefined;
+  const image = post.cover_image || "/hero.jpg";
 
-    return {
+  return {
+    title,
+    description,
+    openGraph: {
       title,
       description,
-      openGraph: {
-        title,
-        description,
-        images: [{ url: image, width: 1200, height: 630 }],
-        type: "article",
-      },
-      twitter: {
-        card: "summary_large_image",
-        title,
-        description,
-        images: [image],
-      },
-    };
-  } catch (err) {
-    console.error("[blog/[slug]] generateMetadata error", err);
-    return { title: `Blog (metadata error: ${(err as Error)?.message || "unknown"})` };
-  }
+      images: [{ url: image, width: 1200, height: 630 }],
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [image],
+    },
+  };
 }
 
 export default async function BlogPostPage({ params }: Props) {
-  try {
-    return await renderBlogPost(params);
-  } catch (err) {
-    const e = err as Error;
-    console.error("[blog/[slug]] render error", e);
-    return (
-      <div style={{ padding: "120px 24px 80px", maxWidth: 900, margin: "0 auto", fontFamily: "ui-monospace, monospace", color: "#111" }}>
-        <h1 style={{ fontSize: 22, marginBottom: 12 }}>Blog post — server render failed (debug)</h1>
-        <p style={{ marginBottom: 6 }}><strong>name:</strong> {e?.name || "(no name)"}</p>
-        <p style={{ marginBottom: 6 }}><strong>message:</strong> {e?.message || "(no message)"}</p>
-        <pre style={{ whiteSpace: "pre-wrap", background: "#f5f5f5", padding: 12, fontSize: 12, marginTop: 12 }}>
-          {e?.stack || String(err)}
-        </pre>
-      </div>
-    );
-  }
-}
-
-async function renderBlogPost(params: Props["params"]) {
   const { slug } = await params;
   const { data: post } = await supabaseAdmin
     .from("blog_posts")
