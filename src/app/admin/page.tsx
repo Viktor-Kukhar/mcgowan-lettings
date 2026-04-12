@@ -196,7 +196,7 @@ export default function AdminDashboardPage() {
               </svg>
             </div>
             <div>
-              <p className="text-sm font-medium text-dark">Image Storage</p>
+              <p className="text-sm font-medium text-dark">Media Storage</p>
               <p className="text-xs text-text-muted">
                 {storage.loading ? (
                   "Calculating..."

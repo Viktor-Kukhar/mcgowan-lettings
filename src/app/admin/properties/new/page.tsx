@@ -5,7 +5,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import SortableImageGrid from "../SortableImageGrid";
+import VideoList from "../VideoList";
 import { compressImage } from "@/lib/compress-image";
+import { transcodeVideoToMp4 } from "@/lib/video-transcode";
 import { useStorageUsage, formatBytes } from "@/lib/use-storage-usage";
 import RichTextEditor from "@/components/RichTextEditor";
 
@@ -39,9 +41,13 @@ export default function NewPropertyPage() {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [uploadingVideo, setUploadingVideo] = useState(false);
+  const [videoStatus, setVideoStatus] = useState("");
+  const [videoProgress, setVideoProgress] = useState(0);
   const [error, setError] = useState("");
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [videoUrls, setVideoUrls] = useState<string[]>([]);
   const storage = useStorageUsage();
 
   const [form, setForm] = useState({
@@ -128,6 +134,72 @@ export default function NewPropertyPage() {
     setImagePreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setUploadingVideo(true);
+    setError("");
+
+    const newUrls: string[] = [];
+
+    for (const file of Array.from(files)) {
+      try {
+        setVideoStatus(`Preparing ${file.name}...`);
+        setVideoProgress(0);
+
+        const mp4File = await transcodeVideoToMp4(file, (stage, ratio) => {
+          if (stage === "loading") {
+            setVideoStatus("Loading video converter (first time only)...");
+            setVideoProgress(0);
+          } else {
+            setVideoStatus(`Converting to 1080p MP4...`);
+            setVideoProgress(Math.round(ratio * 100));
+          }
+        });
+
+        setVideoStatus("Uploading...");
+        setVideoProgress(100);
+
+        const safeName = mp4File.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+        const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}-${safeName}`;
+        const filePath = `properties/videos/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from("property-images")
+          .upload(filePath, mp4File, { contentType: "video/mp4" });
+
+        if (uploadError) {
+          setError(`Failed to upload ${file.name}: ${uploadError.message}`);
+          continue;
+        }
+
+        const {
+          data: { publicUrl },
+        } = supabase.storage.from("property-images").getPublicUrl(filePath);
+
+        newUrls.push(publicUrl);
+      } catch (err) {
+        setError(`Failed to process ${file.name}: ${err instanceof Error ? err.message : "Unknown error"}`);
+      }
+    }
+
+    setVideoUrls((prev) => [...prev, ...newUrls]);
+    setUploadingVideo(false);
+    setVideoStatus("");
+    setVideoProgress(0);
+    e.target.value = "";
+  };
+
+  const removeVideo = async (index: number) => {
+    const url = videoUrls[index];
+    const path = url.split("/property-images/")[1];
+    if (path) {
+      await supabase.storage.from("property-images").remove([path]);
+    }
+    setVideoUrls((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -156,6 +228,7 @@ export default function NewPropertyPage() {
       active: form.active,
       featured: form.featured,
       images: imageUrls,
+      videos: videoUrls,
       status: form.status,
       furnished: form.furnished,
       available_from: form.available_from || null,
@@ -574,6 +647,59 @@ export default function NewPropertyPage() {
           </label>
         </div>
 
+        {/* Videos */}
+        <div className="rounded-xl bg-white border border-gray-200 p-6 shadow-sm space-y-5">
+          <div>
+            <h3 className="text-sm font-semibold text-dark uppercase tracking-wider">
+              Virtual Tour Video
+            </h3>
+            <p className="text-xs text-text-muted mt-1">
+              Upload a short walkthrough video. Shown as a &ldquo;Virtual Tour&rdquo; button on the property page.
+            </p>
+          </div>
+
+          <VideoList videos={videoUrls} onRemove={removeVideo} />
+
+          {uploadingVideo ? (
+            <div className="rounded-lg border-2 border-dashed border-brand/50 bg-brand/5 px-6 py-8">
+              <div className="flex items-center gap-3 mb-3">
+                <svg className="h-5 w-5 animate-spin text-brand-dark" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                </svg>
+                <span className="text-sm font-medium text-brand-dark">{videoStatus}</span>
+              </div>
+              <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200">
+                <div
+                  className="h-full bg-brand transition-all duration-200"
+                  style={{ width: `${videoProgress}%` }}
+                />
+              </div>
+              <p className="text-xs text-text-muted mt-2">
+                Don&rsquo;t close this tab — conversion runs in your browser.
+              </p>
+            </div>
+          ) : (
+            <label className="flex cursor-pointer flex-col items-center gap-2 rounded-lg border-2 border-dashed border-gray-300 px-6 py-8 text-center transition-colors hover:border-brand/50 hover:bg-brand/5">
+              <svg className="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z" />
+              </svg>
+              <div>
+                <span className="text-sm font-medium text-brand-dark">Upload video</span>
+                <p className="text-xs text-text-muted mt-1">
+                  Straight from your iPhone is fine. We&rsquo;ll auto-compress to 1080p MP4.
+                </p>
+              </div>
+              <input
+                type="file"
+                accept="video/mp4,video/quicktime,video/*"
+                onChange={handleVideoUpload}
+                className="hidden"
+              />
+            </label>
+          )}
+        </div>
+
         {/* Submit buttons */}
         <div className="flex flex-col-reverse gap-3 pb-6 sm:flex-row sm:items-center sm:justify-end">
           <Link
@@ -584,7 +710,7 @@ export default function NewPropertyPage() {
           </Link>
           <button
             type="submit"
-            disabled={saving || uploading}
+            disabled={saving || uploading || uploadingVideo}
             className="rounded-lg bg-brand px-6 py-2.5 text-sm font-semibold text-dark transition-colors hover:bg-brand-light disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {saving ? "Saving..." : "Create Property"}

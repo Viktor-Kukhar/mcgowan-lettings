@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { cleanupOrphans } from "@/lib/cleanup-orphans";
 
 const BUCKET = "property-images";
 const LIMIT_BYTES = 1024 * 1024 * 1024; // 1 GB
@@ -19,10 +20,11 @@ export function useStorageUsage(): StorageUsage {
 
   useEffect(() => {
     const calculate = async () => {
+      try { await cleanupOrphans(); } catch {}
       let total = 0;
 
-      // List all files in the bucket across known prefixes
-      for (const prefix of ["properties", "epc"]) {
+      // List all files in the bucket across known prefixes (non-recursive, so list subfolders explicitly)
+      for (const prefix of ["properties", "properties/videos", "epc"]) {
         let offset = 0;
         const pageSize = 1000;
         let hasMore = true;

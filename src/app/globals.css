@@ -18,6 +18,7 @@
 
 html {
   scroll-behavior: smooth;
+  scrollbar-gutter: stable;
 }
 
 a, button, [role="button"], input[type="submit"], input[type="button"], select, summary {
@@ -86,6 +87,77 @@ body {
 /* Logo orb gradient */
 .orb-gradient {
   background: radial-gradient(circle at 40% 35%, #c8e84a 0%, #8cc614 35%, #5a9a0a 70%, #3d7a08 100%);
+}
+
+/* TipTap editor content */
+.tiptap-content p { margin: 0.5rem 0; }
+.tiptap-content p:first-child { margin-top: 0; }
+.tiptap-content p:last-child { margin-bottom: 0; }
+.tiptap-content h2 {
+  font-family: var(--font-heading), serif;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-dark);
+  margin: 1rem 0 0.5rem;
+}
+.tiptap-content h2:first-child { margin-top: 0; }
+.tiptap-content strong { font-weight: 600; color: var(--color-dark); }
+.tiptap-content em { font-style: italic; }
+.tiptap-content a { color: var(--color-brand-dark); text-decoration: underline; }
+.tiptap-content p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: var(--color-text-light);
+  pointer-events: none;
+  height: 0;
+}
+
+/* Rendered rich text on public pages */
+.rich-content p { margin: 0 0 1rem; line-height: 1.8; color: color-mix(in oklab, var(--color-dark) 75%, transparent); }
+.rich-content p:last-child { margin-bottom: 0; }
+.rich-content h2 {
+  font-family: var(--font-heading), serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-dark);
+  margin: 2rem 0 0.75rem;
+  padding-left: 1rem;
+  border-left: 3px solid var(--color-brand);
+}
+.rich-content h2:first-child { margin-top: 0; }
+.rich-content strong { font-weight: 600; color: var(--color-dark); }
+.rich-content em { font-style: italic; }
+.rich-content a { color: var(--color-brand-dark); text-decoration: underline; }
+.rich-content a:hover { color: var(--color-brand); }
+
+@media (min-width: 768px) {
+  .rich-content h2 { font-size: 1.5rem; }
+}
+
+.plyr-brand {
+  border-radius: 12px;
+  overflow: hidden;
+  clip-path: inset(0 round 12px);
+  isolation: isolate;
+}
+.plyr-brand .plyr {
+  --plyr-color-main: var(--color-brand);
+  --plyr-control-radius: 4px;
+}
+
+@keyframes video-lightbox-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes video-lightbox-scale {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+.video-lightbox-backdrop {
+  animation: video-lightbox-fade 180ms ease-out;
+}
+.video-lightbox-content {
+  animation: video-lightbox-scale 220ms cubic-bezier(0.2, 0.7, 0.3, 1);
 }
 
 @media (prefers-reduced-motion: reduce) {
