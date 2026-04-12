@@ -36,6 +36,7 @@ export default function ContactPage() {
     email: "",
     enquiryType: "",
     message: "",
+    website: "",
   });
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -46,20 +47,25 @@ export default function ContactPage() {
     setSubmitting(true);
     setError("");
 
-    const result = await submitContactForm({
-      name: formData.name,
-      email: formData.email,
-      phone: formData.phone,
-      type: formData.enquiryType,
-      message: formData.message,
-    });
+    try {
+      const result = await submitContactForm({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        type: formData.enquiryType,
+        message: formData.message,
+        website: formData.website,
+      });
 
-    setSubmitting(false);
-
-    if (result.success) {
-      setSubmitted(true);
-    } else {
-      setError(result.error);
+      if (result.success) {
+        setSubmitted(true);
+      } else {
+        setError(result.error);
+      }
+    } catch {
+      setError("Network error. Please check your connection and try again.");
+    } finally {
+      setSubmitting(false);
     }
   }
 
@@ -262,7 +268,26 @@ export default function ContactPage() {
                       </p>
                     </div>
                   ) : (
-                    <form onSubmit={handleSubmit} className="space-y-5">
+                    <form onSubmit={handleSubmit} className="space-y-5" noValidate={false}>
+                      {/* Honeypot — bots auto-fill this; real users won't see it */}
+                      <div
+                        aria-hidden="true"
+                        style={{ position: "absolute", left: "-10000px", width: "1px", height: "1px", overflow: "hidden" }}
+                      >
+                        <label htmlFor="website">Website</label>
+                        <input
+                          type="text"
+                          id="website"
+                          name="website"
+                          tabIndex={-1}
+                          autoComplete="off"
+                          value={formData.website}
+                          onChange={(e) =>
+                            setFormData({ ...formData, website: e.target.value })
+                          }
+                        />
+                      </div>
+
                       {/* Name */}
                       <div>
                         <label
@@ -296,6 +321,7 @@ export default function ContactPage() {
                           <input
                             type="tel"
                             id="phone"
+                            required
                             value={formData.phone}
                             onChange={(e) =>
                               setFormData({
@@ -405,13 +431,21 @@ export default function ContactPage() {
 
                       {/* Error message */}
                       {error && (
-                        <p className="text-red-600 text-sm">{error}</p>
+                        <p
+                          id="contact-form-error"
+                          role="alert"
+                          aria-live="polite"
+                          className="text-red-600 text-sm"
+                        >
+                          {error}
+                        </p>
                       )}
 
                       {/* Submit */}
                       <button
                         type="submit"
                         disabled={submitting}
+                        aria-describedby={error ? "contact-form-error" : undefined}
                         className="inline-flex items-center gap-2 bg-brand text-dark font-semibold px-8 py-3.5 rounded-sm hover:bg-brand-light transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                       >
                         {submitting ? "Sending..." : "Send Message"}

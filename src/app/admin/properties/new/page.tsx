@@ -7,7 +7,7 @@ import { supabase } from "@/lib/supabase";
 import SortableImageGrid from "../SortableImageGrid";
 import VideoList from "../VideoList";
 import { compressImage } from "@/lib/compress-image";
-import { transcodeVideoToMp4 } from "@/lib/video-transcode";
+import { transcodeVideoToMp4, MAX_VIDEO_BYTES } from "@/lib/video-transcode";
 import { useStorageUsage, formatBytes } from "@/lib/use-storage-usage";
 import RichTextEditor from "@/components/RichTextEditor";
 
@@ -145,6 +145,15 @@ export default function NewPropertyPage() {
 
     for (const file of Array.from(files)) {
       try {
+        if (!file.type.startsWith("video/")) {
+          throw new Error("File is not a video.");
+        }
+        if (file.size > MAX_VIDEO_BYTES) {
+          throw new Error(
+            `Video is too large (${(file.size / 1024 / 1024).toFixed(0)}MB). Maximum is ${MAX_VIDEO_BYTES / 1024 / 1024}MB.`
+          );
+        }
+
         setVideoStatus(`Preparing ${file.name}...`);
         setVideoProgress(0);
 
@@ -523,6 +532,17 @@ export default function NewPropertyPage() {
                   onChange={async (e) => {
                     const file = e.target.files?.[0];
                     if (!file) return;
+                    const allowed = ["application/pdf", "image/jpeg", "image/png", "image/webp"];
+                    if (!allowed.includes(file.type)) {
+                      setError("EPC must be a PDF, JPG, PNG or WebP file.");
+                      e.target.value = "";
+                      return;
+                    }
+                    if (file.size > 10 * 1024 * 1024) {
+                      setError("EPC file is too large. Maximum is 10MB.");
+                      e.target.value = "";
+                      return;
+                    }
                     const fileExt = file.name.split(".").pop();
                     const fileName = `epc-${Date.now()}.${fileExt}`;
                     const filePath = `epc/${fileName}`;
@@ -692,7 +712,7 @@ export default function NewPropertyPage() {
               </div>
               <input
                 type="file"
-                accept="video/mp4,video/quicktime,video/*"
+                accept="video/mp4,video/quicktime,video/x-m4v,video/webm"
                 onChange={handleVideoUpload}
                 className="hidden"
               />

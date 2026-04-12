@@ -8,6 +8,9 @@ let loadPromise: Promise<FFmpeg> | null = null;
 
 const CORE_BASE = "https://unpkg.com/@ffmpeg/core@0.12.10/dist/umd";
 
+export const MAX_VIDEO_BYTES = 500 * 1024 * 1024;
+const TRANSCODE_TIMEOUT_MS = 10 * 60 * 1000;
+
 async function loadFFmpeg(): Promise<FFmpeg> {
   if (ffmpegInstance) return ffmpegInstance;
   if (loadPromise) return loadPromise;
@@ -43,6 +46,14 @@ export async function transcodeVideoToMp4(
   const inputName = `input${ext}`;
   const outputName = "output.mp4";
 
+  let timedOut = false;
+  const timeoutId = setTimeout(() => {
+    timedOut = true;
+    try { ffmpeg.terminate(); } catch {}
+    ffmpegInstance = null;
+    loadPromise = null;
+  }, TRANSCODE_TIMEOUT_MS);
+
   try {
     await ffmpeg.writeFile(inputName, await fetchFile(file));
 
@@ -61,6 +72,10 @@ export async function transcodeVideoToMp4(
       outputName,
     ]);
 
+    if (timedOut) {
+      throw new Error("Video conversion timed out. Try a shorter or smaller video.");
+    }
+
     const data = await ffmpeg.readFile(outputName);
     const bytes = data instanceof Uint8Array ? new Uint8Array(data) : new TextEncoder().encode(data);
     const blob = new Blob([bytes.buffer as ArrayBuffer], { type: "video/mp4" });
@@ -68,8 +83,11 @@ export async function transcodeVideoToMp4(
 
     return new File([blob], newName, { type: "video/mp4" });
   } finally {
+    clearTimeout(timeoutId);
     ffmpeg.off("progress", progressHandler);
-    try { await ffmpeg.deleteFile(inputName); } catch {}
-    try { await ffmpeg.deleteFile(outputName); } catch {}
+    if (!timedOut) {
+      try { await ffmpeg.deleteFile(inputName); } catch {}
+      try { await ffmpeg.deleteFile(outputName); } catch {}
+    }
   }
 }

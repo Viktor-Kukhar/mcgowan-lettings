@@ -20,6 +20,7 @@ export default function AdminDashboardPage() {
     unreadSubmissions: 0,
   });
   const [loading, setLoading] = useState(true);
+  const [statsError, setStatsError] = useState("");
   const storage = useStorageUsage();
 
   useEffect(() => {
@@ -31,6 +32,12 @@ export default function AdminDashboardPage() {
           .select("id", { count: "exact", head: true })
           .eq("read", false),
       ]);
+
+      if (propertiesRes.error || unreadRes.error) {
+        setStatsError("Couldn't load dashboard stats. Please refresh the page.");
+        setLoading(false);
+        return;
+      }
 
       const properties = propertiesRes.data ?? [];
       const activeCount = properties.filter((p) => p.active).length;
@@ -101,6 +108,12 @@ export default function AdminDashboardPage() {
           Here&apos;s an overview of your property portfolio.
         </p>
       </div>
+
+      {statsError && (
+        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {statsError}
+        </div>
+      )}
 
       {/* Stats cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">

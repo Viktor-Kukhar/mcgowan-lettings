@@ -101,8 +101,13 @@ export default function NewBlogPostPage() {
     setError("");
     setSaving(true);
 
-    if (!form.title || !form.slug) {
+    if (!form.title.trim()) {
       setError("Please enter a title.");
+      setSaving(false);
+      return;
+    }
+    if (!form.slug.trim()) {
+      setError("Slug is empty. The title needs to contain letters or numbers — or edit the slug manually.");
       setSaving(false);
       return;
     }

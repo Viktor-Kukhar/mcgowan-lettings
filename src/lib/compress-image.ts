@@ -1,10 +1,17 @@
 const MAX_WIDTH = 1600;
 const MAX_HEIGHT = 1600;
 const QUALITY = 0.75;
+const MAX_INPUT_BYTES = 50 * 1024 * 1024;
 
 const SUPPORTED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 
 export async function compressImage(file: File): Promise<File> {
+  if (file.size > MAX_INPUT_BYTES) {
+    throw new Error(
+      `Image is too large (${(file.size / 1024 / 1024).toFixed(0)}MB). Maximum is ${MAX_INPUT_BYTES / 1024 / 1024}MB.`
+    );
+  }
+
   // Reject unsupported formats (e.g. HEIC from iPhones)
   if (!SUPPORTED_TYPES.includes(file.type) && !file.type.startsWith("image/")) {
     return file;
@@ -26,7 +33,7 @@ export async function compressImage(file: File): Promise<File> {
   // Skip if already small (under 500KB)
   if (file.size < 500 * 1024) return file;
 
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => {
       let { width, height } = img;
@@ -62,7 +69,7 @@ export async function compressImage(file: File): Promise<File> {
         QUALITY
       );
     };
-    img.onerror = () => resolve(file);
+    img.onerror = () => reject(new Error("Could not read image. It may be corrupted or in an unsupported format."));
     img.src = URL.createObjectURL(file);
   });
 }

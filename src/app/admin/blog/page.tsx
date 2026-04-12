@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { supabase } from "@/lib/supabase";
+import { deleteBlogPost as deleteBlogPostAction } from "@/app/actions/admin";
 
 interface BlogPost {
   id: string;
@@ -19,6 +20,7 @@ export default function AdminBlogPage() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [toggling, setToggling] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [message, setMessage] = useState<{
     text: string;
     type: "success" | "error";
@@ -61,6 +63,21 @@ export default function AdminBlogPage() {
       });
     }
     setToggling(null);
+    setTimeout(() => setMessage(null), 3000);
+  };
+
+  const handleDelete = async (post: BlogPost) => {
+    if (!window.confirm(`Delete "${post.title}"? This cannot be undone.`)) return;
+    setDeletingId(post.id);
+    const result = await deleteBlogPostAction(post.id, post.cover_image);
+    if (!result.success) {
+      setMessage({ text: result.error || "Failed to delete post.", type: "error" });
+      setDeletingId(null);
+      return;
+    }
+    setPosts((prev) => prev.filter((p) => p.id !== post.id));
+    setMessage({ text: "Post deleted.", type: "success" });
+    setDeletingId(null);
     setTimeout(() => setMessage(null), 3000);
   };
 
@@ -197,15 +214,24 @@ export default function AdminBlogPage() {
                       </button>
                     </td>
                     <td className="px-4 py-3">
-                      <Link
-                        href={`/admin/blog/${post.id}/edit`}
-                        className="inline-flex items-center gap-1.5 rounded-lg bg-gray-100 px-3 py-1.5 text-xs font-medium text-dark transition-colors hover:bg-gray-200"
-                      >
-                        <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
-                        </svg>
-                        Edit
-                      </Link>
+                      <div className="flex items-center gap-2">
+                        <Link
+                          href={`/admin/blog/${post.id}/edit`}
+                          className="inline-flex items-center gap-1.5 rounded-lg bg-gray-100 px-3 py-1.5 text-xs font-medium text-dark transition-colors hover:bg-gray-200"
+                        >
+                          <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                          </svg>
+                          Edit
+                        </Link>
+                        <button
+                          onClick={() => handleDelete(post)}
+                          disabled={deletingId === post.id}
+                          className="inline-flex items-center gap-1.5 rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 transition-colors hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {deletingId === post.id ? "Deleting..." : "Delete"}
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -281,6 +307,14 @@ export default function AdminBlogPage() {
                       >
                         Edit
                       </Link>
+
+                      <button
+                        onClick={() => handleDelete(post)}
+                        disabled={deletingId === post.id}
+                        className="text-xs font-medium text-red-600 hover:underline disabled:opacity-50"
+                      >
+                        {deletingId === post.id ? "Deleting..." : "Delete"}
+                      </button>
                     </div>
                   </div>
                 </div>

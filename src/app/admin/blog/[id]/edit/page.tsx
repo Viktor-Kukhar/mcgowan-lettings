@@ -142,8 +142,13 @@ export default function EditBlogPostPage() {
     setSuccess("");
     setSaving(true);
 
-    if (!form.title || !form.slug) {
+    if (!form.title.trim()) {
       setError("Please enter a title.");
+      setSaving(false);
+      return;
+    }
+    if (!form.slug.trim()) {
+      setError("Slug is empty. The title needs to contain letters or numbers — or edit the slug manually.");
       setSaving(false);
       return;
     }
@@ -392,12 +397,11 @@ export default function EditBlogPostPage() {
 
           {showUnsplash && (
             <UnsplashPicker
-              onSelect={(url) => {
-                // If there was an uploaded cover, clean it up
+              onSelect={async (url) => {
                 if (coverImage) {
                   const oldPath = coverImage.split("/property-images/")[1];
                   if (oldPath) {
-                    supabase.storage.from("property-images").remove([oldPath]);
+                    await supabase.storage.from("property-images").remove([oldPath]);
                   }
                 }
                 setCoverImage(url);

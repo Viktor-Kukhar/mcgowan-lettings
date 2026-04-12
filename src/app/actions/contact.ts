@@ -24,8 +24,15 @@ export async function submitContactForm(formData: {
   phone?: string;
   type?: string;
   message: string;
+  /** Honeypot — must be empty. Any value indicates a bot. */
+  website?: string;
 }): Promise<ContactResult> {
-  const { name, email, phone, type, message } = formData;
+  const { name, email, phone, type, message, website } = formData;
+
+  // Honeypot: silently succeed so bots don't retry
+  if (website && website.trim()) {
+    return { success: true };
+  }
 
   // Validate required fields
   if (!name || !name.trim()) {
