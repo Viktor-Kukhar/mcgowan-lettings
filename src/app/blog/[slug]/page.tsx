@@ -48,6 +48,25 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function BlogPostPage({ params }: Props) {
+  try {
+    return await renderBlogPost(params);
+  } catch (err) {
+    const e = err as Error;
+    console.error("[blog/[slug]] render error", e);
+    return (
+      <div style={{ padding: "120px 24px 80px", maxWidth: 900, margin: "0 auto", fontFamily: "ui-monospace, monospace", color: "#111" }}>
+        <h1 style={{ fontSize: 22, marginBottom: 12 }}>Blog post — server render failed (debug)</h1>
+        <p style={{ marginBottom: 6 }}><strong>name:</strong> {e?.name || "(no name)"}</p>
+        <p style={{ marginBottom: 6 }}><strong>message:</strong> {e?.message || "(no message)"}</p>
+        <pre style={{ whiteSpace: "pre-wrap", background: "#f5f5f5", padding: 12, fontSize: 12, marginTop: 12 }}>
+          {e?.stack || String(err)}
+        </pre>
+      </div>
+    );
+  }
+}
+
+async function renderBlogPost(params: Props["params"]) {
   const { slug } = await params;
   const { data: post } = await supabaseAdmin
     .from("blog_posts")
