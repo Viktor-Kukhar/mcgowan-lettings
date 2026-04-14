@@ -5,7 +5,7 @@ import { supabase } from "@/lib/supabase";
 import { cleanupOrphans } from "@/lib/cleanup-orphans";
 
 const BUCKET = "property-images";
-const LIMIT_BYTES = 1024 * 1024 * 1024; // 1 GB
+const LIMIT_BYTES = 100 * 1024 * 1024 * 1024; // 100 GB (Supabase Pro)
 
 interface StorageUsage {
   usedBytes: number;
