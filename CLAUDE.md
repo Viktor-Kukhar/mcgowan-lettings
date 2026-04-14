@@ -47,8 +47,8 @@ Started McGowan Lettings in 2007, in the industry since 2000 (25+ years experien
 - Areas covered: Bury (main area), Bolton, Manchester, Rossendale + ~20 neighbourhoods (will cover most areas if house is in good order)
 
 ## Assets
-- mcgowan-logo.pdf — logo with Ltd text
-- Hero image: Manchester city centre aerial shot (confirmed by David) — source from Unsplash or similar
+- Logo: public/mcgowan-logo.png
+- Hero image: Manchester city centre aerial shot (confirmed by David)
 
 ## Research
 See RESEARCH.md for full competitor analysis, current site audit, and design patterns.
