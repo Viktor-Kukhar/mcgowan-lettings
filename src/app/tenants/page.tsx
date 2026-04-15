@@ -155,12 +155,11 @@ function FAQItem({ q, a }: { q: string; a: string }) {
         />
       </button>
       <div
-        className="grid transition-all duration-300 ease-in-out"
-        style={{ gridTemplateRows: open ? "1fr" : "0fr" }}
+        className={`overflow-hidden transition-[max-height] duration-300 ease-in-out ${
+          open ? "max-h-[600px]" : "max-h-0"
+        }`}
       >
-        <div className="overflow-hidden">
-          <p className="text-text-muted leading-relaxed pb-5">{a}</p>
-        </div>
+        <p className="text-text-muted leading-relaxed pb-5">{a}</p>
       </div>
     </div>
   );
