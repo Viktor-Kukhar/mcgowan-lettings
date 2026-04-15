@@ -176,18 +176,18 @@ export default function TestimonialsCarousel() {
         </AnimateIn>
 
         {/* Carousel */}
-        <div className="relative px-2 md:px-14">
-          {/* Navigation arrows — hidden on mobile, dots handle navigation */}
+        <div className="relative px-10 md:px-14">
+          {/* Navigation arrows on the sides */}
           <button
             onClick={() => { handleInteraction(); prev(); }}
-            className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white border border-black/10 shadow-sm items-center justify-center hover:bg-brand hover:text-white hover:border-brand transition-all duration-200"
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white border border-black/10 shadow-sm flex items-center justify-center hover:bg-brand hover:text-white hover:border-brand transition-all duration-200"
             aria-label="Previous review"
           >
             <ChevronLeftIcon className="w-5 h-5" />
           </button>
           <button
             onClick={() => { handleInteraction(); next(); }}
-            className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white border border-black/10 shadow-sm items-center justify-center hover:bg-brand hover:text-white hover:border-brand transition-all duration-200"
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white border border-black/10 shadow-sm flex items-center justify-center hover:bg-brand hover:text-white hover:border-brand transition-all duration-200"
             aria-label="Next review"
           >
             <ChevronRightIcon className="w-5 h-5" />
@@ -252,23 +252,6 @@ export default function TestimonialsCarousel() {
             ))}
           </div>
 
-          {/* Mobile: arrows on their own row */}
-          <div className="md:hidden flex items-center justify-center gap-16 mt-6">
-            <button
-              onClick={() => { handleInteraction(); prev(); }}
-              className="w-11 h-11 rounded-full bg-white border border-black/10 shadow-sm flex items-center justify-center hover:bg-brand hover:text-white hover:border-brand transition-all duration-200"
-              aria-label="Previous review"
-            >
-              <ChevronLeftIcon className="w-5 h-5" />
-            </button>
-            <button
-              onClick={() => { handleInteraction(); next(); }}
-              className="w-11 h-11 rounded-full bg-white border border-black/10 shadow-sm flex items-center justify-center hover:bg-brand hover:text-white hover:border-brand transition-all duration-200"
-              aria-label="Next review"
-            >
-              <ChevronRightIcon className="w-5 h-5" />
-            </button>
-          </div>
         </div>
       </div>
     </section>
