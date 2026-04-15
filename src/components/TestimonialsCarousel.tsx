@@ -18,12 +18,6 @@ const TESTIMONIALS = [
     date: "2 months ago",
   },
   {
-    name: "Kesh Athukorala",
-    text: "We recently moved into a property through McGowan Residential Lettings Ltd, and the process was very smooth from start to finish. David was professional, friendly, and helpful throughout, he made sure everything was ready for us.",
-    rating: 5,
-    date: "5 months ago",
-  },
-  {
     name: "Gavin Foley",
     text: "Dave at McGowan Lettings has been superb throughout our stay in one of his managed properties. He gets back to you immediately with whatever questions you have and anything that needs attention he\u2019s on it straight away.",
     rating: 5,
@@ -34,12 +28,6 @@ const TESTIMONIALS = [
     text: "I\u2019m a new tenant of one of David McGowan\u2019s lettings. The house is lovely, well cared for and the whole process of letting the house was managed well and explained fully. David ensured everything ran smoothly and any issues were quickly and efficiently resolved.",
     rating: 5,
     date: "5 months ago",
-  },
-  {
-    name: "Mantas",
-    text: "I had a very positive experience with David. From the very first call when I tried to book it for a viewing till the day I picked up the keys and signed a contract, he\u2019s been incredibly professional, friendly and responsive.",
-    rating: 5,
-    date: "6 months ago",
   },
   {
     name: "Vicky Entwistle",
@@ -246,38 +234,22 @@ export default function TestimonialsCarousel() {
             </div>
           </div>
 
-          {/* Dots + mobile arrows */}
-          <div className="flex items-center justify-center gap-2 mt-8">
-            <button
-              onClick={() => { handleInteraction(); prev(); }}
-              className="md:hidden w-10 h-10 rounded-full bg-white border border-black/10 shadow-sm flex items-center justify-center hover:bg-brand hover:text-white hover:border-brand transition-all duration-200"
-              aria-label="Previous review"
-            >
-              <ChevronLeftIcon className="w-5 h-5" />
-            </button>
-            <div className="flex items-center justify-center gap-1">
-              {Array.from({ length: maxIndex + 1 }).map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => { handleInteraction(); setCurrent(i); }}
-                  className="group p-3 -m-1 cursor-pointer"
-                  aria-label={`Go to slide ${i + 1}`}
-                >
-                  <span
-                    className={`block h-2 rounded-full transition-all duration-200 ${
-                      i === current ? "bg-brand w-6" : "bg-dark/20 group-hover:bg-dark/40 w-2"
-                    }`}
-                  />
-                </button>
-              ))}
-            </div>
-            <button
-              onClick={() => { handleInteraction(); next(); }}
-              className="md:hidden w-10 h-10 rounded-full bg-white border border-black/10 shadow-sm flex items-center justify-center hover:bg-brand hover:text-white hover:border-brand transition-all duration-200"
-              aria-label="Next review"
-            >
-              <ChevronRightIcon className="w-5 h-5" />
-            </button>
+          {/* Dots */}
+          <div className="flex items-center justify-center gap-1 mt-8 md:mt-8">
+            {Array.from({ length: maxIndex + 1 }).map((_, i) => (
+              <button
+                key={i}
+                onClick={() => { handleInteraction(); setCurrent(i); }}
+                className="group p-3 -m-1 cursor-pointer"
+                aria-label={`Go to slide ${i + 1}`}
+              >
+                <span
+                  className={`block h-2 rounded-full transition-all duration-200 ${
+                    i === current ? "bg-brand w-6" : "bg-dark/20 group-hover:bg-dark/40 w-2"
+                  }`}
+                />
+              </button>
+            ))}
           </div>
         </div>
       </div>
