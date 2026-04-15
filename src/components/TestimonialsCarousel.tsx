@@ -235,7 +235,7 @@ export default function TestimonialsCarousel() {
           </div>
 
           {/* Dots */}
-          <div className="flex items-center justify-center gap-1 mt-8 md:mt-8">
+          <div className="flex items-center justify-center gap-1 mt-8">
             {Array.from({ length: maxIndex + 1 }).map((_, i) => (
               <button
                 key={i}
@@ -250,6 +250,24 @@ export default function TestimonialsCarousel() {
                 />
               </button>
             ))}
+          </div>
+
+          {/* Mobile: arrows on their own row */}
+          <div className="md:hidden flex items-center justify-center gap-16 mt-6">
+            <button
+              onClick={() => { handleInteraction(); prev(); }}
+              className="w-11 h-11 rounded-full bg-white border border-black/10 shadow-sm flex items-center justify-center hover:bg-brand hover:text-white hover:border-brand transition-all duration-200"
+              aria-label="Previous review"
+            >
+              <ChevronLeftIcon className="w-5 h-5" />
+            </button>
+            <button
+              onClick={() => { handleInteraction(); next(); }}
+              className="w-11 h-11 rounded-full bg-white border border-black/10 shadow-sm flex items-center justify-center hover:bg-brand hover:text-white hover:border-brand transition-all duration-200"
+              aria-label="Next review"
+            >
+              <ChevronRightIcon className="w-5 h-5" />
+            </button>
           </div>
         </div>
       </div>
