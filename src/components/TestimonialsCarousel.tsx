@@ -12,10 +12,10 @@ import {
 
 const TESTIMONIALS = [
   {
-    name: "Tonicha Adams",
-    text: "I can\u2019t recommend this estate agent enough. They made the whole process completely seamless from start to finish. The property was confirmed as ours within 24 hours, and they arranged our move within just two weeks. What really stood out were the personalised little touches along the way \u2014 things like asking if I had a preference when it came to my daughter\u2019s room. Those small but thoughtful details genuinely made such a difference.",
+    name: "Kesh Athukorala",
+    text: "We recently moved into a property through McGowan Residential Lettings Ltd, and the process was very smooth from start to finish. David was professional, friendly, and helpful throughout, he made sure everything was ready for us.",
     rating: 5,
-    date: "2 months ago",
+    date: "5 months ago",
   },
   {
     name: "Gavin Foley",
