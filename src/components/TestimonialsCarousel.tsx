@@ -197,15 +197,15 @@ export default function TestimonialsCarousel() {
                   className="flex-shrink-0 px-3"
                   style={{ width: `${100 / visibleCount}%` }}
                 >
-                  <div className="bg-white rounded-lg p-8 border border-black/5 relative h-full flex flex-col">
+                  <div className="bg-white rounded-lg p-6 md:p-8 border border-black/5 relative md:h-full flex flex-col">
                     <div className="text-brand/20 text-6xl font-heading leading-none absolute top-4 right-6">&ldquo;</div>
-                    <div className="relative flex flex-col flex-1">
+                    <div className="relative flex flex-col md:flex-1">
                       <div className="flex items-center gap-0.5 mb-4">
                         {[...Array(testimonial.rating)].map((_, j) => (
                           <StarIcon key={j} className="w-4 h-4 text-amber-400" />
                         ))}
                       </div>
-                      <p className="text-dark/80 text-sm leading-relaxed mb-6 flex-1">{testimonial.text}</p>
+                      <p className="text-dark/80 text-sm leading-relaxed mb-6 md:flex-1">{testimonial.text}</p>
                       <div className="flex items-center justify-between">
                         <div>
                           <div className="font-semibold text-dark text-sm">{testimonial.name}</div>
