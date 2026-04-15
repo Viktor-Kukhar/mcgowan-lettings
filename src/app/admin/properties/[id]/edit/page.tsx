@@ -24,6 +24,7 @@ const TYPES = [
   "Terraced",
   "End Terraced",
   "Semi Detached",
+  "Detached",
   "Detached Bungalow",
   "Semi Detached Bungalow",
   "Apartment",
