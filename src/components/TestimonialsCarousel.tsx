@@ -135,6 +135,22 @@ export default function TestimonialsCarousel() {
     setIsAutoPlaying(false);
   };
 
+  // Swipe support for mobile (arrows are hidden on small screens)
+  const touchStartX = useRef<number | null>(null);
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const deltaX = e.changedTouches[0].clientX - touchStartX.current;
+    if (Math.abs(deltaX) > 50) {
+      handleInteraction();
+      if (deltaX < 0) next();
+      else prev();
+    }
+    touchStartX.current = null;
+  };
+
   return (
     <section className="bg-cream py-16 md:py-24">
       <div className="max-w-7xl mx-auto px-6">
@@ -165,25 +181,25 @@ export default function TestimonialsCarousel() {
         </AnimateIn>
 
         {/* Carousel */}
-        <div className="relative px-12 md:px-14">
-          {/* Navigation arrows */}
+        <div className="relative px-2 md:px-14">
+          {/* Navigation arrows — hidden on mobile, dots handle navigation */}
           <button
             onClick={() => { handleInteraction(); prev(); }}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white border border-black/10 shadow-sm flex items-center justify-center hover:bg-brand hover:text-white hover:border-brand transition-all duration-200"
+            className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white border border-black/10 shadow-sm items-center justify-center hover:bg-brand hover:text-white hover:border-brand transition-all duration-200"
             aria-label="Previous review"
           >
             <ChevronLeftIcon className="w-5 h-5" />
           </button>
           <button
             onClick={() => { handleInteraction(); next(); }}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white border border-black/10 shadow-sm flex items-center justify-center hover:bg-brand hover:text-white hover:border-brand transition-all duration-200"
+            className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white border border-black/10 shadow-sm items-center justify-center hover:bg-brand hover:text-white hover:border-brand transition-all duration-200"
             aria-label="Next review"
           >
             <ChevronRightIcon className="w-5 h-5" />
           </button>
 
           {/* Track */}
-          <div className="overflow-hidden">
+          <div className="overflow-hidden" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
             <div
               ref={trackRef}
               className="flex transition-transform duration-500 ease-in-out"
