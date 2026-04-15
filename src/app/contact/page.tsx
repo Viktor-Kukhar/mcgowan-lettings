@@ -495,9 +495,9 @@ export default function ContactPage() {
 
       {/* ── Google Review CTA ── */}
       <section className="bg-dark">
-        <div className="max-w-7xl mx-auto px-6 py-14 md:py-16 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="max-w-7xl mx-auto px-6 py-14 md:py-16 flex flex-col md:flex-row items-center justify-between gap-8 md:gap-6 text-center md:text-left">
           <AnimateIn fadeOnly>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col md:flex-row items-center gap-3">
               <div className="flex -space-x-0.5 text-brand">
                 {[...Array(5)].map((_, i) => (
                   <StarIcon key={i} className="w-5 h-5" />
@@ -507,7 +507,7 @@ export default function ContactPage() {
                 <h3 className="font-heading text-xl md:text-2xl text-white">
                   Leave Us a Google Review
                 </h3>
-                <p className="text-white/50  text-sm mt-1">
+                <p className="text-white/50 text-sm mt-1">
                   Your feedback helps other landlords and tenants find us.
                 </p>
               </div>
