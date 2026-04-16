@@ -218,7 +218,7 @@ export default function PropertiesPage() {
       <section className="bg-cream py-12 md:py-16">
         <div className="max-w-7xl mx-auto px-6">
           {loading ? (
-            <div className="flex items-center justify-center py-24">
+            <div className="flex items-center justify-center min-h-[60vh]">
               <div className="h-8 w-8 animate-spin rounded-full border-4 border-brand border-t-transparent" />
             </div>
           ) : error ? (

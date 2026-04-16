@@ -9,14 +9,14 @@ import { supabaseAdmin } from "@/lib/supabase-server";
 const playfair = Playfair_Display({
   variable: "--font-playfair",
   subsets: ["latin"],
-  display: "swap",
+  display: "optional",
   weight: ["400", "500", "600", "700"],
 });
 
 const jakarta = Plus_Jakarta_Sans({
   variable: "--font-jakarta",
   subsets: ["latin"],
-  display: "swap",
+  display: "optional",
   weight: ["300", "400", "500", "600", "700"],
 });
 
