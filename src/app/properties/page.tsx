@@ -279,8 +279,7 @@ export default function PropertiesPage() {
                             {property.type}
                           </div>
                           {property.status === "Let Agreed" && (
-                            <div className="absolute top-3 left-3 inline-flex items-center gap-1.5 bg-red-600 text-white text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-sm">
-                              <span className="w-1.5 h-1.5 rounded-full bg-white/90" />
+                            <div className="absolute top-3 left-3 bg-red-600 text-white text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-sm">
                               Let Agreed
                             </div>
                           )}
