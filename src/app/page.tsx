@@ -35,6 +35,7 @@ type FeaturedProperty = {
   beds: number;
   baths: number;
   type: string;
+  status: string | null;
 };
 
 const AREAS: { name: string; neighbourhoods: string[]; main?: boolean }[] = [
@@ -198,7 +199,7 @@ export default function HomePage() {
     async function fetchFeatured() {
       const { data } = await supabase
         .from("properties")
-        .select("id, title, price, location, beds, baths, type, images")
+        .select("id, title, price, location, beds, baths, type, images, status")
         .eq("active", true)
         .eq("featured", true)
         .order("created_at", { ascending: false })
@@ -500,6 +501,13 @@ export default function HomePage() {
                       <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-dark text-xs font-medium px-2.5 py-1 rounded-sm">
                         {property.type}
                       </div>
+                      {property.status === "Let Agreed" && (
+                        <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 bg-dark/75 backdrop-blur-sm text-white text-center py-2">
+                          <span className="font-heading text-base tracking-wide">
+                            Let Agreed
+                          </span>
+                        </div>
+                      )}
                     </div>
                     <div className="p-5">
                       <h3 className="font-semibold text-dark mb-1 group-hover:text-brand-dark transition-colors">
