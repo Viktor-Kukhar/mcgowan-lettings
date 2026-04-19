@@ -114,6 +114,7 @@ const content = `<h2>What the law requires</h2>
 <li>The standard will be enforced through the PRS Database and local authority inspections</li>
 </ul>
 <p>If you are fitting or replacing alarms now, choosing hard-wired interlinked systems avoids having to upgrade again in the near future.</p>
+<p>This is one of the areas we stay on top of for every managed property at McGowan Lettings. With over 25 years letting homes across Bury, Bolton, Manchester and the wider Greater Manchester area, we know how easily a missing alarm or a lapsed CO sensor can turn into a £5,000 problem — and a serious safety risk for the tenant. If you would like help making sure your property meets the current rules, <a href='/contact'>get in touch with us</a>.</p>
 
 <h2>Key takeaways</h2>
 <ul>
