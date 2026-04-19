@@ -7,7 +7,8 @@ Started McGowan Lettings in 2007, in the industry since 2000 (25+ years experien
 ~18 properties, ~250 rental properties total (many archived). No property management software — manages manually.
 
 ## Tech Stack
-- Next.js 15 (App Router)
+- Next.js 16 (App Router)
+- React 19
 - Supabase (database + auth)
 - Tailwind CSS v4
 - Vercel (hosting)
