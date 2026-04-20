@@ -37,9 +37,11 @@ export async function generateMetadata({ params }: Props) {
   return {
     title,
     description,
+    alternates: { canonical: `/blog/${slug}` },
     openGraph: {
       title,
       description,
+      url: `/blog/${slug}`,
       images: [{ url: image, width: 1200, height: 630 }],
       type: "article",
     },

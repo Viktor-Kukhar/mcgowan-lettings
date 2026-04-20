@@ -422,7 +422,7 @@ export default async function PropertyDetailPage({ params }: Props) {
                     <div className="relative aspect-[4/3] overflow-hidden bg-warm-grey">
                       <Image
                         src={p.images?.[0] || "/hero.jpg"}
-                        alt={p.title}
+                        alt={p.location ? `${p.title} in ${p.location}` : p.title}
                         fill
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         className="property-image object-cover transition-transform duration-700 ease-out"

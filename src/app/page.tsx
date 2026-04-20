@@ -232,8 +232,8 @@ export default function HomePage() {
             src="/hero.jpg"
             alt="Manchester skyline"
             fill
-            sizes="(max-width: 768px) 200vw, 100vw"
-            quality={90}
+            sizes="100vw"
+            quality={85}
             className="object-cover object-bottom"
             priority
           />
@@ -489,7 +489,7 @@ export default function HomePage() {
                     <div className="relative aspect-[4/3] overflow-hidden bg-warm-grey">
                       <Image
                         src={property.images?.[0] || "/hero.jpg"}
-                        alt={property.title}
+                        alt={property.location ? `${property.title} in ${property.location}` : property.title}
                         fill
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         className="property-image object-cover transition-transform duration-700 ease-out"

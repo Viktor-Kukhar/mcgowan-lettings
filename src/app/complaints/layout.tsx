@@ -4,6 +4,7 @@ export const metadata: Metadata = {
   title: "Complaints Procedure | McGowan Residential Lettings",
   description:
     "Our complaints procedure. Learn how to raise a complaint with McGowan Residential Lettings and how we handle the resolution process.",
+  alternates: { canonical: "/complaints" },
 };
 
 export default function ComplaintsLayout({

@@ -4,6 +4,7 @@ export const metadata: Metadata = {
   title: "Tenant Information | McGowan Residential Lettings",
   description:
     "Everything you need to know about renting with McGowan Residential Lettings. Move-in costs, responsibilities, FAQs and fees for tenants across Greater Manchester.",
+  alternates: { canonical: "/tenants" },
 };
 
 export default function TenantsLayout({

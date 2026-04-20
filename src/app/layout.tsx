@@ -22,6 +22,7 @@ const jakarta = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://mcgowanlettings.co.uk"),
+  alternates: { canonical: "/" },
   title: "McGowan Residential Lettings | Premium Lettings in Greater Manchester",
   description:
     "McGowan Residential Lettings — professional letting agents covering Bolton, Bury, Manchester & Rossendale. Find your perfect rental property or let your investment with confidence.",

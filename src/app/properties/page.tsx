@@ -274,7 +274,7 @@ export default function PropertiesPage() {
                         <div className="relative aspect-[4/3] overflow-hidden bg-warm-grey">
                           <Image
                             src={property.images?.[0] || "/hero.jpg"}
-                            alt={property.title}
+                            alt={property.location ? `${property.title} in ${property.location}` : property.title}
                             fill
                             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                             className="property-image object-cover transition-transform duration-700 ease-out"

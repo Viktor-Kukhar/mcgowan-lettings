@@ -280,6 +280,7 @@ export async function generateMetadata({
   return {
     title: `Renting in ${area.name} | McGowan Residential Lettings`,
     description: `Discover what it is like to rent in ${area.name}. Local neighbourhood guide, transport links, amenities and available properties from McGowan Lettings.`,
+    alternates: { canonical: `/areas/${slug}` },
   };
 }
 
