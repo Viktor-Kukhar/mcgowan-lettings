@@ -5,8 +5,17 @@ import { supabaseAdmin } from "@/lib/supabase-server";
 import { AnimateIn } from "@/components/AnimateIn";
 import { renderInline, isHtml } from "@/lib/rich-text";
 import BlogRichContent from "./BlogRichContent";
+import { getPost } from "./get-post";
 
 export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const { data } = await supabaseAdmin
+    .from("blog_posts")
+    .select("slug")
+    .eq("published", true);
+  return data?.map(({ slug }) => ({ slug })) ?? [];
+}
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -14,12 +23,7 @@ type Props = {
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
-  const { data: post } = await supabaseAdmin
-    .from("blog_posts")
-    .select("title, excerpt, cover_image, content")
-    .eq("slug", slug)
-    .eq("published", true)
-    .single();
+  const post = await getPost(slug);
 
   if (!post) {
     return { title: "Post Not Found | McGowan Residential Lettings" };
@@ -56,12 +60,7 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
-  const { data: post } = await supabaseAdmin
-    .from("blog_posts")
-    .select("*")
-    .eq("slug", slug)
-    .eq("published", true)
-    .single();
+  const post = await getPost(slug);
 
   if (!post) {
     notFound();

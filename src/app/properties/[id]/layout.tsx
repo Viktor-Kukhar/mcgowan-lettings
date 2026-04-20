@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { supabaseAdmin } from "@/lib/supabase-server";
+import { getProperty } from "./get-property";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -7,12 +7,7 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-
-  const { data: property } = await supabaseAdmin
-    .from("properties")
-    .select("title, location, price, beds, type, images, description")
-    .eq("id", id)
-    .single();
+  const property = await getProperty(id);
 
   if (!property) {
     return {

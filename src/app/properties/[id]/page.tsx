@@ -3,8 +3,18 @@ import Image from "next/image";
 import Link from "next/link";
 import { Metadata } from "next";
 import { supabaseAdmin } from "@/lib/supabase-server";
+import { getProperty } from "./get-property";
 
 export const revalidate = 3600;
+
+export async function generateStaticParams() {
+  const { data } = await supabaseAdmin
+    .from("properties")
+    .select("id")
+    .eq("active", true);
+  return data?.map(({ id }) => ({ id })) ?? [];
+}
+
 import PropertyGallery from "./PropertyGallery";
 import ExpandableDescription from "./ExpandableDescription";
 import {
@@ -25,12 +35,7 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-
-  const { data: property } = await supabaseAdmin
-    .from("properties")
-    .select("title, location, price, beds, baths, type, images, description")
-    .eq("id", id)
-    .single();
+  const property = await getProperty(id);
 
   if (!property) {
     return { title: "Property Not Found | McGowan Lettings" };
@@ -63,14 +68,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PropertyDetailPage({ params }: Props) {
   const { id } = await params;
+  const property = await getProperty(id);
 
-  const { data: property, error } = await supabaseAdmin
-    .from("properties")
-    .select("*")
-    .eq("id", id)
-    .single();
-
-  if (error || !property || !property.active) {
+  if (!property || !property.active) {
     notFound();
   }
 
