@@ -16,6 +16,25 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: "/properties/:slug([a-z0-9-]*[g-z][a-z0-9-]*)",
+        destination: "/properties",
+        permanent: true,
+      },
+      {
+        source: "/property_category/:path*",
+        destination: "/properties",
+        permanent: true,
+      },
+      {
+        source: "/property_action_category/:path*",
+        destination: "/properties",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
