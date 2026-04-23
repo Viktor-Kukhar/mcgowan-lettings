@@ -70,8 +70,10 @@ export default function AdminBlogPage() {
 
   const handleDelete = async (post: BlogPost) => {
     if (!window.confirm(`Delete "${post.title}"? This cannot be undone.`)) return;
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
     setDeletingId(post.id);
-    const result = await deleteBlogPostAction(post.id, post.cover_image);
+    const result = await deleteBlogPostAction(post.id, post.cover_image, session.access_token);
     if (!result.success) {
       setMessage({ text: result.error || "Failed to delete post.", type: "error" });
       setDeletingId(null);

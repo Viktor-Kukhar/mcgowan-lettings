@@ -312,9 +312,10 @@ export default function EditPropertyPage() {
       return;
     }
 
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
     setDeleting(true);
-
-    const result = await deletePropertyAction(id, imageUrls);
+    const result = await deletePropertyAction(id, imageUrls, session.access_token);
 
     if (!result.success) {
       setError(result.error);

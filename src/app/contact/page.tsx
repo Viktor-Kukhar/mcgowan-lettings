@@ -35,7 +35,7 @@ export default function ContactPage() {
     email: "",
     enquiryType: "",
     message: "",
-    website: "",
+    company_url: "",
   });
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -53,7 +53,7 @@ export default function ContactPage() {
         phone: formData.phone,
         type: formData.enquiryType,
         message: formData.message,
-        website: formData.website,
+        website: formData.company_url,
       });
 
       if (result.success) {
@@ -273,16 +273,16 @@ export default function ContactPage() {
                         aria-hidden="true"
                         style={{ position: "absolute", left: "-10000px", width: "1px", height: "1px", overflow: "hidden" }}
                       >
-                        <label htmlFor="website">Website</label>
+                        <label htmlFor="company_url">Company URL</label>
                         <input
                           type="text"
-                          id="website"
-                          name="website"
+                          id="company_url"
+                          name="company_url"
                           tabIndex={-1}
                           autoComplete="off"
-                          value={formData.website}
+                          value={formData.company_url}
                           onChange={(e) =>
-                            setFormData({ ...formData, website: e.target.value })
+                            setFormData({ ...formData, company_url: e.target.value })
                           }
                         />
                       </div>

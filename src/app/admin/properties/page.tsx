@@ -25,6 +25,7 @@ export default function AdminPropertiesPage() {
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
   const [toggling, setToggling] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [message, setMessage] = useState<{
     text: string;
     type: "success" | "error";
@@ -72,7 +73,10 @@ export default function AdminPropertiesPage() {
       return;
     }
 
-    const result = await deletePropertyAction(property.id, property.images || []);
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
+    setDeletingId(property.id);
+    const result = await deletePropertyAction(property.id, property.images || [], session.access_token);
 
     if (!result.success) {
       setMessage({ text: "Failed to delete property.", type: "error" });
@@ -80,6 +84,7 @@ export default function AdminPropertiesPage() {
       setProperties((prev) => prev.filter((p) => p.id !== property.id));
       setMessage({ text: "Property deleted.", type: "success" });
     }
+    setDeletingId(null);
     setTimeout(() => setMessage(null), 3000);
   };
 
@@ -289,9 +294,10 @@ export default function AdminPropertiesPage() {
                         </Link>
                         <button
                           onClick={() => deleteProperty(property)}
-                          className="text-xs font-medium text-red-500 transition-colors hover:text-red-700"
+                          disabled={deletingId === property.id}
+                          className="text-xs font-medium text-red-500 transition-colors hover:text-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          Delete
+                          {deletingId === property.id ? "Deleting..." : "Delete"}
                         </button>
                       </div>
                     </td>
@@ -395,9 +401,10 @@ export default function AdminPropertiesPage() {
 
                       <button
                         onClick={() => deleteProperty(property)}
-                        className="text-xs font-medium text-red-500 transition-colors hover:text-red-700"
+                        disabled={deletingId === property.id}
+                        className="text-xs font-medium text-red-500 transition-colors hover:text-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        Delete
+                        {deletingId === property.id ? "Deleting..." : "Delete"}
                       </button>
                     </div>
                   </div>

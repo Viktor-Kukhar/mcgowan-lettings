@@ -200,9 +200,10 @@ export default function EditBlogPostPage() {
       return;
     }
 
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
     setDeleting(true);
-
-    const result = await deleteBlogPostAction(id, coverImage || null);
+    const result = await deleteBlogPostAction(id, coverImage || null, session.access_token);
 
     if (!result.success) {
       setError(result.error);

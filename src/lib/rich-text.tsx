@@ -14,6 +14,10 @@ function escapeHtml(s: string): string {
     .replace(/"/g, "&quot;");
 }
 
+function isSafeUrl(url: string): boolean {
+  return /^(https?:|mailto:|tel:|\/|#)/i.test(url.trim());
+}
+
 function inlineMarkdownToHtml(text: string): string {
   let result = "";
   let lastIndex = 0;
@@ -28,7 +32,11 @@ function inlineMarkdownToHtml(text: string): string {
     } else if (match[2] !== undefined) {
       result += `<em>${escapeHtml(match[2])}</em>`;
     } else if (match[3] !== undefined && match[4] !== undefined) {
-      result += `<a href="${escapeHtml(match[4])}" target="_blank" rel="noopener noreferrer">${escapeHtml(match[3])}</a>`;
+      if (isSafeUrl(match[4])) {
+        result += `<a href="${escapeHtml(match[4])}" target="_blank" rel="noopener noreferrer">${escapeHtml(match[3])}</a>`;
+      } else {
+        result += escapeHtml(match[3]);
+      }
     }
     lastIndex = INLINE_RE.lastIndex;
   }
@@ -74,17 +82,21 @@ export function renderInline(text: string): React.ReactNode[] {
     } else if (match[2] !== undefined) {
       nodes.push(<em key={key++}>{match[2]}</em>);
     } else if (match[3] !== undefined && match[4] !== undefined) {
-      nodes.push(
-        <a
-          key={key++}
-          href={match[4]}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-brand-dark underline hover:text-brand"
-        >
-          {match[3]}
-        </a>
-      );
+      if (isSafeUrl(match[4])) {
+        nodes.push(
+          <a
+            key={key++}
+            href={match[4]}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-brand-dark underline hover:text-brand"
+          >
+            {match[3]}
+          </a>
+        );
+      } else {
+        nodes.push(match[3]);
+      }
     }
     lastIndex = INLINE_RE.lastIndex;
   }

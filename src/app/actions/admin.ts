@@ -3,6 +3,16 @@
 import { revalidatePath } from "next/cache";
 import { supabaseAdmin } from "@/lib/supabase-server";
 
+async function requireAdmin(accessToken: string) {
+  if (!accessToken) throw new Error("Unauthorized");
+  const {
+    data: { user },
+    error,
+  } = await supabaseAdmin.auth.getUser(accessToken);
+  if (error || !user) throw new Error("Unauthorized");
+  return user;
+}
+
 export async function revalidateBlog(slug?: string) {
   revalidatePath("/blog");
   if (slug) {
@@ -18,7 +28,8 @@ export async function revalidateProperty(id?: string) {
   }
 }
 
-export async function deleteProperty(id: string, imageUrls: string[]) {
+export async function deleteProperty(id: string, imageUrls: string[], accessToken: string) {
+  await requireAdmin(accessToken);
   // Remove images from storage
   for (const url of imageUrls) {
     const path = url.split("/property-images/")[1];
@@ -40,7 +51,8 @@ export async function deleteProperty(id: string, imageUrls: string[]) {
   return { success: true, error: "" };
 }
 
-export async function deleteBlogPost(id: string, coverImage: string | null) {
+export async function deleteBlogPost(id: string, coverImage: string | null, accessToken: string) {
+  await requireAdmin(accessToken);
   // Remove cover image from storage
   if (coverImage) {
     const path = coverImage.split("/property-images/")[1];
@@ -61,7 +73,8 @@ export async function deleteBlogPost(id: string, coverImage: string | null) {
   return { success: true, error: "" };
 }
 
-export async function deleteSubmission(id: string) {
+export async function deleteSubmission(id: string, accessToken: string) {
+  await requireAdmin(accessToken);
   const { error } = await supabaseAdmin
     .from("contact_submissions")
     .delete()
@@ -73,7 +86,8 @@ export async function deleteSubmission(id: string) {
   return { success: true, error: "" };
 }
 
-export async function deleteValuationRequest(id: string) {
+export async function deleteValuationRequest(id: string, accessToken: string) {
+  await requireAdmin(accessToken);
   const { error } = await supabaseAdmin
     .from("valuation_requests")
     .delete()

@@ -82,7 +82,11 @@ export default function RichTextEditor({
       editor.chain().focus().extendMarkRange("link").unsetLink().run();
       return;
     }
-    editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
+    if (!/^https?:\/\//i.test(url.trim())) {
+      alert("Please enter a valid URL starting with https:// or http://");
+      return;
+    }
+    editor.chain().focus().extendMarkRange("link").setLink({ href: url.trim() }).run();
   };
 
   const btnClass = (active: boolean) =>
