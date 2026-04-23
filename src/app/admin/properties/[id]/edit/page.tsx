@@ -52,6 +52,7 @@ export default function EditPropertyPage() {
   const [videoStatus, setVideoStatus] = useState("");
   const [videoProgress, setVideoProgress] = useState(0);
   const [error, setError] = useState("");
+  const [videoError, setVideoError] = useState("");
   const [success, setSuccess] = useState("");
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [videoUrls, setVideoUrls] = useState<string[]>([]);
@@ -199,7 +200,7 @@ export default function EditPropertyPage() {
     if (!files || files.length === 0) return;
 
     setUploadingVideo(true);
-    setError("");
+    setVideoError("");
 
     const newUrls: string[] = [];
 
@@ -210,7 +211,7 @@ export default function EditPropertyPage() {
         }
         if (file.size > MAX_VIDEO_BYTES) {
           throw new Error(
-            `Video is too large (${(file.size / 1024 / 1024).toFixed(0)}MB). Maximum is ${MAX_VIDEO_BYTES / 1024 / 1024}MB.`
+            `Video is too large (${(file.size / 1024 / 1024).toFixed(0)} MB). Maximum is ${MAX_VIDEO_BYTES / 1024 / 1024 / 1024} GB. Try recording a shorter clip or in lower quality.`
           );
         }
 
@@ -232,7 +233,7 @@ export default function EditPropertyPage() {
         const publicUrl = await uploadVideoFile(uploadFile, uploadFile.type);
         if (publicUrl) newUrls.push(publicUrl);
       } catch (err) {
-        setError(`Failed to process ${file.name}: ${err instanceof Error ? err.message : "Unknown error"}`);
+        setVideoError(err instanceof Error ? err.message : "Failed to process video.");
       }
     }
 
@@ -765,6 +766,12 @@ export default function EditPropertyPage() {
           </div>
 
           <VideoList videos={videoUrls} onRemove={removeVideo} />
+
+          {videoError && (
+            <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {videoError}
+            </div>
+          )}
 
           {uploadingVideo ? (
             <div className="rounded-lg border-2 border-dashed border-brand/50 bg-brand/5 px-6 py-8">
