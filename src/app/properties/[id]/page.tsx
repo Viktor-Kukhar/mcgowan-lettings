@@ -74,13 +74,20 @@ export default async function PropertyDetailPage({ params }: Props) {
     notFound();
   }
 
-  const { data: similarProperties } = await supabaseAdmin
+  const orFilters = [
+    property.area ? `area.eq.${property.area}` : null,
+    property.type ? `type.eq.${property.type}` : null,
+  ].filter(Boolean).join(",");
+
+  const similarQuery = supabaseAdmin
     .from("properties")
     .select("id, title, price, location, beds, baths, type, images, status")
     .eq("active", true)
-    .neq("id", id)
-    .or(`area.eq.${property.area},type.eq.${property.type}`)
-    .limit(3);
+    .neq("id", id);
+
+  const { data: similarProperties } = await (
+    orFilters ? similarQuery.or(orFilters) : similarQuery
+  ).limit(3);
 
   const images: string[] = property.images ?? [];
   const videos: string[] = property.videos ?? [];

@@ -10,6 +10,7 @@ import { compressImage } from "@/lib/compress-image";
 import { transcodeVideoToMp4, MAX_VIDEO_BYTES } from "@/lib/video-transcode";
 import { useStorageUsage, formatBytes } from "@/lib/use-storage-usage";
 import RichTextEditor from "@/components/RichTextEditor";
+import { revalidateProperty } from "@/app/actions/admin";
 
 const AREAS = [
   "Bury",
@@ -58,7 +59,7 @@ export default function NewPropertyPage() {
     area: "Bury",
     beds: "",
     baths: "",
-    type: "House",
+    type: "Terraced",
     active: true,
     featured: false,
     status: "To Let",
@@ -130,6 +131,26 @@ export default function NewPropertyPage() {
     setImageUrls((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const uploadVideoFile = async (file: File, contentType: string): Promise<string | null> => {
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+    const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}-${safeName}`;
+    const filePath = `properties/videos/${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("property-images")
+      .upload(filePath, file, { contentType });
+
+    if (uploadError) {
+      setError(`Failed to upload ${file.name}: ${uploadError.message}`);
+      return null;
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+      .from("property-images")
+      .getPublicUrl(filePath);
+    return publicUrl;
+  };
+
   const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
@@ -150,40 +171,36 @@ export default function NewPropertyPage() {
           );
         }
 
-        setVideoStatus(`Preparing ${file.name}...`);
-        setVideoProgress(0);
+        let uploadFile: File = file;
+        let contentType = file.type;
 
-        const mp4File = await transcodeVideoToMp4(file, (stage, ratio) => {
-          if (stage === "loading") {
-            setVideoStatus("Loading video converter (first time only)...");
+        const isAlreadyMp4 = file.type === "video/mp4";
+        if (!isAlreadyMp4) {
+          try {
+            setVideoStatus(`Preparing ${file.name}...`);
             setVideoProgress(0);
-          } else {
-            setVideoStatus(`Converting to 1080p MP4...`);
-            setVideoProgress(Math.round(ratio * 100));
+
+            uploadFile = await transcodeVideoToMp4(file, (stage, ratio) => {
+              if (stage === "loading") {
+                setVideoStatus("Loading video converter (first time only)...");
+                setVideoProgress(0);
+              } else {
+                setVideoStatus(`Converting to 1080p MP4...`);
+                setVideoProgress(Math.round(ratio * 100));
+              }
+            });
+            contentType = "video/mp4";
+          } catch {
+            uploadFile = file;
+            contentType = file.type;
           }
-        });
+        }
 
         setVideoStatus("Uploading...");
         setVideoProgress(100);
 
-        const safeName = mp4File.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-        const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}-${safeName}`;
-        const filePath = `properties/videos/${fileName}`;
-
-        const { error: uploadError } = await supabase.storage
-          .from("property-images")
-          .upload(filePath, mp4File, { contentType: "video/mp4" });
-
-        if (uploadError) {
-          setError(`Failed to upload ${file.name}: ${uploadError.message}`);
-          continue;
-        }
-
-        const {
-          data: { publicUrl },
-        } = supabase.storage.from("property-images").getPublicUrl(filePath);
-
-        newUrls.push(publicUrl);
+        const publicUrl = await uploadVideoFile(uploadFile, contentType);
+        if (publicUrl) newUrls.push(publicUrl);
       } catch (err) {
         setError(`Failed to process ${file.name}: ${err instanceof Error ? err.message : "Unknown error"}`);
       }
@@ -248,6 +265,7 @@ export default function NewPropertyPage() {
       return;
     }
 
+    await revalidateProperty();
     router.push("/admin/properties");
   };
 
@@ -703,7 +721,7 @@ export default function NewPropertyPage() {
               <div>
                 <span className="text-sm font-medium text-brand-dark">Upload video</span>
                 <p className="text-xs text-text-muted mt-1">
-                  Straight from your iPhone is fine. We&rsquo;ll auto-compress to 1080p MP4.
+                  Straight from your iPhone is fine &mdash; MP4, MOV all accepted.
                 </p>
               </div>
               <input

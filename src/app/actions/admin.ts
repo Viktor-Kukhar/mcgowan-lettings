@@ -10,6 +10,14 @@ export async function revalidateBlog(slug?: string) {
   }
 }
 
+export async function revalidateProperty(id?: string) {
+  revalidatePath("/properties");
+  revalidatePath("/");
+  if (id) {
+    revalidatePath(`/properties/${id}`);
+  }
+}
+
 export async function deleteProperty(id: string, imageUrls: string[]) {
   // Remove images from storage
   for (const url of imageUrls) {
@@ -27,6 +35,8 @@ export async function deleteProperty(id: string, imageUrls: string[]) {
   if (error) {
     return { success: false, error: error.message };
   }
+  revalidatePath("/properties");
+  revalidatePath("/");
   return { success: true, error: "" };
 }
 
