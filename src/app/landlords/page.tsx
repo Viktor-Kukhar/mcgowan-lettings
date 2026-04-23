@@ -43,6 +43,13 @@ const LET_ONLY_FEATURES = [
   "Moving the tenants in and then hand over to the landlord",
 ];
 
+const RENT_COLLECTION_FEATURES = [
+  "Collect rent on your behalf — payments monitored and processed efficiently",
+  "Chase late payments promptly and keep you informed of any arrears",
+  "Provide regular statements so you have a clear record of income",
+  "Protect your tenant's deposit in a government-approved tenancy deposit scheme",
+];
+
 const WHY_CHOOSE = [
   {
     icon: UserGroupIcon,
@@ -163,12 +170,12 @@ export default function LandlordsPage() {
             <p className="text-text-muted text-lg max-w-2xl mb-14">
               We will never forget that your property is one of your most important
               assets. Every property is treated as if it was our own home. Choose
-              from fully managed or let only — both at competitive rates with no
-              hidden fees.
+              from fully managed, let only, or rent collection &amp; deposit
+              protection — all at competitive rates with no hidden fees.
             </p>
           </AnimateIn>
 
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Fully Managed */}
             <AnimateIn>
               <div className="bg-white rounded-lg p-8 md:p-10 border border-black/5 shadow-sm relative overflow-hidden h-full">
@@ -246,6 +253,44 @@ export default function LandlordsPage() {
                 </Link>
               </div>
             </AnimateIn>
+
+            {/* Rent Collection & Deposit Protection */}
+            <AnimateIn delay={0.3}>
+              <div className="bg-white rounded-lg p-8 md:p-10 border border-black/5 shadow-sm relative overflow-hidden h-full">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="w-12 h-12 bg-dark/5 rounded-lg flex items-center justify-center">
+                    <CurrencyIcon className="w-6 h-6 text-dark/60" />
+                  </div>
+                </div>
+                <h3 className="font-heading text-2xl font-semibold text-dark mb-2">
+                  Rent Collection &amp; Deposit Protection
+                </h3>
+                <p className="text-text-muted mb-6 leading-relaxed">
+                  Designed for landlords who prefer to manage their property
+                  day-to-day but want peace of mind when it comes to financial
+                  administration and legal compliance. Stay in control while we
+                  handle the essential financial and regulatory responsibilities.
+                </p>
+                <ul className="space-y-3 mb-8">
+                  {RENT_COLLECTION_FEATURES.map((item) => (
+                    <li
+                      key={item}
+                      className="flex items-start gap-2.5 text-sm text-text-muted"
+                    >
+                      <CheckIcon className="w-4 h-4 text-brand shrink-0 mt-0.5" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center justify-center gap-2 border border-dark/20 text-dark font-semibold px-6 py-3 rounded-sm hover:bg-dark hover:text-white transition-all duration-200 text-sm w-full md:w-auto"
+                >
+                  Enquire Now
+                  <ArrowRightIcon className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            </AnimateIn>
           </div>
 
           {/* No Let No Fee callout */}
@@ -260,7 +305,7 @@ export default function LandlordsPage() {
                     No let — no fee. No hidden charges.
                   </p>
                   <p className="text-white/50 text-sm">
-                    Both services come with transparent, competitive pricing. You
+                    All services come with transparent, competitive pricing. You
                     only pay when your property is successfully let.
                   </p>
                 </div>

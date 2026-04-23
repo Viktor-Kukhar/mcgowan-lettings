@@ -22,6 +22,7 @@ import {
   ShieldIcon,
   CheckIcon,
   KeyIcon,
+  CurrencyIcon,
 } from "@/components/Icons";
 
 /* ───────────────────────── DATA ───────────────────────── */
@@ -378,7 +379,7 @@ export default function HomePage() {
             </p>
           </AnimateIn>
 
-          <AnimateIn delay={0.15} className="grid md:grid-cols-2 gap-6">
+          <AnimateIn delay={0.15} className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Fully Managed */}
             <div className="bg-white rounded-lg p-8 md:p-10 border border-black/5 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden">
               <div className="absolute top-0 left-0 h-[3px] w-0 bg-brand group-hover:w-full transition-all duration-500 ease-out" />
@@ -451,6 +452,38 @@ export default function HomePage() {
                 </ul>
                 <Link href="/landlords" className="inline-flex items-center gap-2 text-sm font-semibold text-brand-dark hover:text-brand transition-colors group/link">
                   Learn more about Let Only
+                  <ArrowRightIcon className="w-3.5 h-3.5 group-hover/link:translate-x-1 transition-transform" />
+                </Link>
+              </div>
+            </div>
+
+            {/* Rent Collection & Deposit Protection */}
+            <div className="bg-white rounded-lg p-8 md:p-10 border border-black/5 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden">
+              <div className="absolute top-0 left-0 h-[3px] w-0 bg-brand group-hover:w-full transition-all duration-500 ease-out" />
+              <div>
+                <div className="w-12 h-12 bg-dark/5 rounded-lg flex items-center justify-center mb-6">
+                  <CurrencyIcon className="w-6 h-6 text-dark/60" />
+                </div>
+                <h3 className="font-heading text-2xl font-semibold text-dark mb-2">Rent Collection &amp; Deposit Protection</h3>
+                <p className="text-text-muted mb-6 leading-relaxed">
+                  Stay in control of your property day-to-day while we handle the financial
+                  administration and legal compliance for complete peace of mind.
+                </p>
+                <ul className="space-y-3 mb-8">
+                  {[
+                    "Collect rent on your behalf — payments monitored and processed efficiently",
+                    "Chase late payments promptly and keep you informed of any arrears",
+                    "Provide regular statements so you have a clear record of income",
+                    "Protect your tenant's deposit in a government-approved tenancy deposit scheme",
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-2.5 text-sm text-text-muted">
+                      <CheckIcon className="w-4 h-4 text-brand shrink-0 mt-0.5" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+                <Link href="/landlords" className="inline-flex items-center gap-2 text-sm font-semibold text-brand-dark hover:text-brand transition-colors group/link">
+                  Learn more about Rent Collection
                   <ArrowRightIcon className="w-3.5 h-3.5 group-hover/link:translate-x-1 transition-transform" />
                 </Link>
               </div>
