@@ -124,6 +124,23 @@ body {
   border-left: 3px solid var(--color-brand);
 }
 .rich-content h2:first-child { margin-top: 0; }
+.rich-content h3 {
+  font-family: var(--font-heading), serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-dark);
+  margin: 1.75rem 0 0.5rem;
+}
+.rich-content ul, .rich-content ol {
+  margin: 0 0 1.25rem;
+  padding-left: 1.5rem;
+  color: color-mix(in oklab, var(--color-dark) 75%, transparent);
+  line-height: 1.8;
+}
+.rich-content ul { list-style-type: disc; }
+.rich-content ol { list-style-type: decimal; }
+.rich-content li { margin-bottom: 0.3rem; }
+.rich-content li:last-child { margin-bottom: 0; }
 .rich-content strong { font-weight: 600; color: var(--color-dark); }
 .rich-content em { font-style: italic; }
 .rich-content a { color: var(--color-brand-dark); text-decoration: underline; }
@@ -131,6 +148,7 @@ body {
 
 @media (min-width: 768px) {
   .rich-content h2 { font-size: 1.5rem; }
+  .rich-content h3 { font-size: 1.25rem; }
 }
 
 .plyr-brand {
