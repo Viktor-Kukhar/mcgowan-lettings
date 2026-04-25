@@ -5,6 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { supabase } from "@/lib/supabase";
+import { checkIsAdmin } from "@/app/actions/admin";
 
 export default function AdminLayout({
   children,
@@ -18,14 +19,25 @@ export default function AdminLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
+    const verifyAdmin = async (accessToken: string | undefined) => {
+      if (!accessToken) return false;
+      return checkIsAdmin(accessToken);
+    };
+
     const checkAuth = async () => {
       const {
         data: { session },
       } = await supabase.auth.getSession();
       if (!session && pathname !== "/admin/login") {
         router.replace("/admin/login");
-      } else {
-        setAuthenticated(!!session);
+      } else if (session) {
+        const isAdmin = await verifyAdmin(session.access_token);
+        if (!isAdmin) {
+          await supabase.auth.signOut();
+          router.replace("/admin/login");
+        } else {
+          setAuthenticated(true);
+        }
       }
       setLoading(false);
     };
@@ -34,12 +46,19 @@ export default function AdminLayout({
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (!session && pathname !== "/admin/login") {
         router.replace("/admin/login");
         setAuthenticated(false);
-      } else {
-        setAuthenticated(!!session);
+      } else if (session) {
+        const isAdmin = await verifyAdmin(session.access_token);
+        if (!isAdmin) {
+          await supabase.auth.signOut();
+          router.replace("/admin/login");
+          setAuthenticated(false);
+        } else {
+          setAuthenticated(true);
+        }
       }
     });
 

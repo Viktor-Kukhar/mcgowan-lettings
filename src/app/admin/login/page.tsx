@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { supabase } from "@/lib/supabase";
+import { checkIsAdmin } from "@/app/actions/admin";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -45,13 +46,21 @@ export default function AdminLoginPage() {
     setError("");
     setLoading(true);
 
-    const { error: authError } = await supabase.auth.signInWithPassword({
+    const { data, error: authError } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
     if (authError) {
       setError(authError.message);
+      setLoading(false);
+      return;
+    }
+
+    const isAdmin = await checkIsAdmin(data.session.access_token);
+    if (!isAdmin) {
+      await supabase.auth.signOut();
+      setError("You do not have admin access.");
       setLoading(false);
       return;
     }

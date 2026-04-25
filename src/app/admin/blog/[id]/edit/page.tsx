@@ -6,7 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { supabase } from "@/lib/supabase";
 import { compressImage } from "@/lib/compress-image";
-import { deleteBlogPost as deleteBlogPostAction, revalidateBlog } from "@/app/actions/admin";
+import { deleteBlogPost as deleteBlogPostAction, updateBlogPost } from "@/app/actions/admin";
 import UnsplashPicker from "@/components/UnsplashPicker";
 import RichTextEditor from "@/components/RichTextEditor";
 
@@ -170,26 +170,29 @@ export default function EditBlogPostPage() {
       return;
     }
 
-    const { error: updateError } = await supabase
-      .from("blog_posts")
-      .update({
-        title: form.title,
-        slug: form.slug,
-        excerpt: form.excerpt || null,
-        content: form.content || null,
-        cover_image: coverImage || null,
-        published: form.published,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", id);
-
-    if (updateError) {
-      setError(updateError.message);
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      setError("Session expired. Please sign in again.");
       setSaving(false);
       return;
     }
 
-    await revalidateBlog(form.slug);
+    const result = await updateBlogPost(id, {
+      title: form.title,
+      slug: form.slug,
+      excerpt: form.excerpt || null,
+      content: form.content || null,
+      cover_image: coverImage || null,
+      published: form.published,
+      updated_at: new Date().toISOString(),
+    }, session.access_token);
+
+    if (!result.success) {
+      setError(result.error);
+      setSaving(false);
+      return;
+    }
+
     setSuccess("Post updated successfully.");
     setSaving(false);
     setTimeout(() => setSuccess(""), 3000);

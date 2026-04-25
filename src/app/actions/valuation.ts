@@ -27,8 +27,13 @@ export async function submitValuationForm(formData: {
   bedrooms?: string;
   situation?: string;
   message?: string;
+  website?: string;
 }): Promise<ValuationResult> {
-  const { name, email, phone, address, property_type, bedrooms, situation, message } = formData;
+  const { name, email, phone, address, property_type, bedrooms, situation, message, website } = formData;
+
+  if (website && website.trim()) {
+    return { success: true };
+  }
 
   // Validate required fields
   if (!name || !name.trim()) {

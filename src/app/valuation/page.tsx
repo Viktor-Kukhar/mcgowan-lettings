@@ -57,6 +57,7 @@ export default function ValuationPage() {
     bedrooms: "",
     situation: "",
     message: "",
+    company_url: "",
   });
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -76,6 +77,7 @@ export default function ValuationPage() {
       bedrooms: formData.bedrooms,
       situation: formData.situation,
       message: formData.message,
+      website: formData.company_url,
     });
 
     setSubmitting(false);
@@ -181,6 +183,21 @@ export default function ValuationPage() {
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-5">
+                  <div
+                    aria-hidden="true"
+                    style={{ position: "absolute", left: "-10000px", width: "1px", height: "1px", overflow: "hidden" }}
+                  >
+                    <label htmlFor="val_company_url">Company URL</label>
+                    <input
+                      type="text"
+                      id="val_company_url"
+                      name="company_url"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      value={formData.company_url}
+                      onChange={(e) => setFormData({ ...formData, company_url: e.target.value })}
+                    />
+                  </div>
                   {/* Name */}
                   <div>
                     <label

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { deleteValuationRequest as deleteValuationAction } from "@/app/actions/admin";
+import { deleteValuationRequest as deleteValuationAction, markValuationRead, markAllValuationsRead } from "@/app/actions/admin";
 
 interface ValuationRequest {
   id: string;
@@ -58,12 +58,10 @@ export default function AdminValuationsPage() {
 
     // Mark as read if unread
     if (!request.read) {
-      const { error } = await supabase
-        .from("valuation_requests")
-        .update({ read: true })
-        .eq("id", request.id);
-
-      if (!error) {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      const result = await markValuationRead(request.id, session.access_token);
+      if (result.success) {
         setRequests((prev) =>
           prev.map((r) =>
             r.id === request.id ? { ...r, read: true } : r
@@ -77,12 +75,11 @@ export default function AdminValuationsPage() {
     const unreadIds = requests.filter((r) => !r.read).map((r) => r.id);
     if (unreadIds.length === 0) return;
 
-    const { error } = await supabase
-      .from("valuation_requests")
-      .update({ read: true })
-      .in("id", unreadIds);
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
 
-    if (error) {
+    const result = await markAllValuationsRead(unreadIds, session.access_token);
+    if (!result.success) {
       setMessage({ text: "Failed to mark all as read.", type: "error" });
     } else {
       setRequests((prev) => prev.map((r) => ({ ...r, read: true })));

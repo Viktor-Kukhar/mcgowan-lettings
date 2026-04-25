@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { deleteSubmission as deleteSubmissionAction } from "@/app/actions/admin";
+import { deleteSubmission as deleteSubmissionAction, markSubmissionRead, markAllSubmissionsRead } from "@/app/actions/admin";
 
 interface Submission {
   id: string;
@@ -55,12 +55,10 @@ export default function AdminSubmissionsPage() {
 
     // Mark as read if unread
     if (!submission.read) {
-      const { error } = await supabase
-        .from("contact_submissions")
-        .update({ read: true })
-        .eq("id", submission.id);
-
-      if (!error) {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      const result = await markSubmissionRead(submission.id, session.access_token);
+      if (result.success) {
         setSubmissions((prev) =>
           prev.map((s) =>
             s.id === submission.id ? { ...s, read: true } : s
@@ -74,12 +72,11 @@ export default function AdminSubmissionsPage() {
     const unreadIds = submissions.filter((s) => !s.read).map((s) => s.id);
     if (unreadIds.length === 0) return;
 
-    const { error } = await supabase
-      .from("contact_submissions")
-      .update({ read: true })
-      .in("id", unreadIds);
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
 
-    if (error) {
+    const result = await markAllSubmissionsRead(unreadIds, session.access_token);
+    if (!result.success) {
       setMessage({ text: "Failed to mark all as read.", type: "error" });
     } else {
       setSubmissions((prev) => prev.map((s) => ({ ...s, read: true })));

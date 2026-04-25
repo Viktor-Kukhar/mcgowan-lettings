@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { supabase } from "@/lib/supabase";
-import { deleteProperty as deletePropertyAction } from "@/app/actions/admin";
+import { deleteProperty as deletePropertyAction, togglePropertyActive, togglePropertyFeatured } from "@/app/actions/admin";
 
 interface Property {
   id: string;
@@ -53,12 +53,11 @@ export default function AdminPropertiesPage() {
 
   const toggleActive = async (id: string, currentActive: boolean) => {
     setToggling(id);
-    const { error } = await supabase
-      .from("properties")
-      .update({ active: !currentActive, updated_at: new Date().toISOString() })
-      .eq("id", id);
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) { setToggling(null); return; }
 
-    if (error) {
+    const result = await togglePropertyActive(id, !currentActive, session.access_token);
+    if (!result.success) {
       setMessage({ text: "Failed to update property.", type: "error" });
     } else {
       setProperties((prev) =>
@@ -89,15 +88,11 @@ export default function AdminPropertiesPage() {
   };
 
   const toggleFeatured = async (id: string, currentFeatured: boolean) => {
-    const { error } = await supabase
-      .from("properties")
-      .update({
-        featured: !currentFeatured,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", id);
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
 
-    if (error) {
+    const result = await togglePropertyFeatured(id, !currentFeatured, session.access_token);
+    if (!result.success) {
       setMessage({ text: "Failed to update featured status.", type: "error" });
     } else {
       setProperties((prev) =>

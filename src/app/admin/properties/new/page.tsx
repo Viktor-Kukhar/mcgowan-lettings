@@ -10,7 +10,7 @@ import { compressImage } from "@/lib/compress-image";
 import { transcodeVideoToMp4, MAX_VIDEO_BYTES } from "@/lib/video-transcode";
 import { useStorageUsage, formatBytes } from "@/lib/use-storage-usage";
 import RichTextEditor from "@/components/RichTextEditor";
-import { revalidateProperty } from "@/app/actions/admin";
+import { createProperty } from "@/app/actions/admin";
 
 const AREAS = [
   "Bury",
@@ -226,7 +226,14 @@ export default function NewPropertyPage() {
       .map((f) => f.trim())
       .filter(Boolean);
 
-    const { error: insertError } = await supabase.from("properties").insert({
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      setError("Session expired. Please sign in again.");
+      setSaving(false);
+      return;
+    }
+
+    const result = await createProperty({
       title: form.title,
       description: form.description || null,
       price: parseInt(form.price),
@@ -245,15 +252,14 @@ export default function NewPropertyPage() {
       council_tax_band: form.council_tax_band || null,
       epc_document: form.epc_document || null,
       features: featuresArray.length > 0 ? featuresArray : null,
-    });
+    }, session.access_token);
 
-    if (insertError) {
-      setError(insertError.message);
+    if (!result.success) {
+      setError(result.error);
       setSaving(false);
       return;
     }
 
-    await revalidateProperty();
     router.push("/admin/properties");
   };
 

@@ -6,7 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { supabase } from "@/lib/supabase";
 import { compressImage } from "@/lib/compress-image";
-import { revalidateBlog } from "@/app/actions/admin";
+import { createBlogPost } from "@/app/actions/admin";
 import UnsplashPicker from "@/components/UnsplashPicker";
 import RichTextEditor from "@/components/RichTextEditor";
 
@@ -113,35 +113,28 @@ export default function NewBlogPostPage() {
       return;
     }
 
-    // Check for duplicate slug
-    const { data: existing } = await supabase
-      .from("blog_posts")
-      .select("id")
-      .eq("slug", form.slug)
-      .maybeSingle();
-
-    if (existing) {
-      setError("A blog post with this URL slug already exists. Please change the title or edit the slug.");
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      setError("Session expired. Please sign in again.");
       setSaving(false);
       return;
     }
 
-    const { error: insertError } = await supabase.from("blog_posts").insert({
+    const result = await createBlogPost({
       title: form.title,
       slug: form.slug,
       excerpt: form.excerpt || null,
       content: form.content || null,
       cover_image: coverImage || null,
       published: form.published,
-    });
+    }, session.access_token);
 
-    if (insertError) {
-      setError(insertError.message);
+    if (!result.success) {
+      setError(result.error);
       setSaving(false);
       return;
     }
 
-    await revalidateBlog(form.slug);
     router.push("/admin/blog");
   };
 

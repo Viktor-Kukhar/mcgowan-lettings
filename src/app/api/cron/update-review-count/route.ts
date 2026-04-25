@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { supabaseAdmin } from "@/lib/supabase-server";
 
 const GOOGLE_MAPS_URL =
@@ -66,6 +67,8 @@ export async function GET(request: Request) {
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
+
+    revalidatePath("/");
 
     return NextResponse.json({ success: true, count });
   } catch (err) {

@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { supabaseAdmin } from "@/lib/supabase-server";
 import { AnimateIn } from "@/components/AnimateIn";
 import { renderInline, isHtml } from "@/lib/rich-text";
 import BlogRichContent from "./BlogRichContent";

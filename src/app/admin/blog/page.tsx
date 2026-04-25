@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { supabase } from "@/lib/supabase";
-import { deleteBlogPost as deleteBlogPostAction } from "@/app/actions/admin";
+import { deleteBlogPost as deleteBlogPostAction, toggleBlogPublished } from "@/app/actions/admin";
 
 interface BlogPost {
   id: string;
@@ -48,12 +48,11 @@ export default function AdminBlogPage() {
 
   const togglePublished = async (id: string, currentPublished: boolean) => {
     setToggling(id);
-    const { error } = await supabase
-      .from("blog_posts")
-      .update({ published: !currentPublished, updated_at: new Date().toISOString() })
-      .eq("id", id);
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) { setToggling(null); return; }
 
-    if (error) {
+    const result = await toggleBlogPublished(id, !currentPublished, session.access_token);
+    if (!result.success) {
       setMessage({ text: "Failed to update post.", type: "error" });
     } else {
       setPosts((prev) =>

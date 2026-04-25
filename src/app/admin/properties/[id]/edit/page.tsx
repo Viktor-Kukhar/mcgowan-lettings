@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
-import { deleteProperty as deletePropertyAction, revalidateProperty } from "@/app/actions/admin";
+import { deleteProperty as deletePropertyAction, updateProperty } from "@/app/actions/admin";
 import SortableImageGrid from "../../SortableImageGrid";
 import VideoList from "../../VideoList";
 import { compressImage } from "@/lib/compress-image";
@@ -270,38 +270,41 @@ export default function EditPropertyPage() {
       .map((f) => f.trim())
       .filter(Boolean);
 
-    const { error: updateError } = await supabase
-      .from("properties")
-      .update({
-        title: form.title,
-        description: form.description || null,
-        price: parseInt(form.price),
-        location: form.location,
-        area: form.area,
-        beds: parseInt(form.beds),
-        baths: parseInt(form.baths),
-        type: form.type,
-        active: form.active,
-        featured: form.featured,
-        images: imageUrls,
-        videos: videoUrls,
-        status: form.status,
-        furnished: form.furnished,
-        available_from: form.available_from || null,
-        council_tax_band: form.council_tax_band || null,
-        epc_document: form.epc_document || null,
-        features: featuresArray.length > 0 ? featuresArray : null,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", id);
-
-    if (updateError) {
-      setError(updateError.message);
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      setError("Session expired. Please sign in again.");
       setSaving(false);
       return;
     }
 
-    await revalidateProperty(id);
+    const result = await updateProperty(id, {
+      title: form.title,
+      description: form.description || null,
+      price: parseInt(form.price),
+      location: form.location,
+      area: form.area,
+      beds: parseInt(form.beds),
+      baths: parseInt(form.baths),
+      type: form.type,
+      active: form.active,
+      featured: form.featured,
+      images: imageUrls,
+      videos: videoUrls,
+      status: form.status,
+      furnished: form.furnished,
+      available_from: form.available_from || null,
+      council_tax_band: form.council_tax_band || null,
+      epc_document: form.epc_document || null,
+      features: featuresArray.length > 0 ? featuresArray : null,
+      updated_at: new Date().toISOString(),
+    }, session.access_token);
+
+    if (!result.success) {
+      setError(result.error);
+      setSaving(false);
+      return;
+    }
+
     setSuccess("Property updated successfully.");
     setSaving(false);
     setTimeout(() => setSuccess(""), 3000);
