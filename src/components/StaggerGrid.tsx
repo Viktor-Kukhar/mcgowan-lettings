@@ -16,18 +16,35 @@ export function StaggerGrid({
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    let cancelled = false;
+    const show = () => {
+      if (!cancelled) setVisible(true);
+    };
+    if (!el || typeof IntersectionObserver === "undefined") {
+      show();
+      return;
+    }
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight) {
+      show();
+      return;
+    }
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setVisible(true);
+          show();
           observer.unobserve(el);
         }
       },
       { threshold: 0.05 }
     );
     observer.observe(el);
-    return () => observer.disconnect();
+    const fallback = window.setTimeout(show, 1200);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(fallback);
+      observer.disconnect();
+    };
   }, []);
 
   return (
