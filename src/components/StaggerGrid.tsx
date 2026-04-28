@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef, type ReactNode } from "react";
 
+type StaggerState = "show" | "hide" | "animate";
+
 export function StaggerGrid({
   children,
   className = "",
@@ -12,40 +14,46 @@ export function StaggerGrid({
   staggerMs?: number;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
+  const [state, setState] = useState<StaggerState>("show");
 
   useEffect(() => {
     const el = ref.current;
-    let cancelled = false;
-    const show = () => {
-      if (!cancelled) setVisible(true);
-    };
-    if (!el || typeof IntersectionObserver === "undefined") {
-      show();
-      return;
-    }
+    if (!el || typeof IntersectionObserver === "undefined") return;
     const rect = el.getBoundingClientRect();
-    if (rect.top < window.innerHeight) {
-      show();
-      return;
-    }
+    if (rect.top < window.innerHeight) return;
+
+    let cancelled = false;
+    const hide = () => {
+      if (!cancelled) setState("hide");
+    };
+    const animate = () => {
+      if (!cancelled) setState("animate");
+    };
+    hide();
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          show();
+          animate();
           observer.unobserve(el);
         }
       },
       { threshold: 0.05 }
     );
     observer.observe(el);
-    const fallback = window.setTimeout(show, 1200);
+    const fallback = window.setTimeout(animate, 1200);
     return () => {
       cancelled = true;
       window.clearTimeout(fallback);
       observer.disconnect();
     };
   }, []);
+
+  const itemStyle = (i: number): React.CSSProperties | undefined => {
+    if (state === "hide") return { opacity: 0 };
+    if (state === "animate") return { animationDelay: `${i * staggerMs}ms` };
+    return undefined;
+  };
 
   return (
     <div
@@ -55,7 +63,7 @@ export function StaggerGrid({
         ["--stagger-ms" as string]: `${staggerMs}ms`,
       }}
     >
-      {visible ? (
+      {state === "animate" ? (
         <style>{`
           .stagger-item {
             opacity: 0;
@@ -71,12 +79,8 @@ export function StaggerGrid({
         ? children.map((child, i) => (
             <div
               key={i}
-              className="stagger-item"
-              style={
-                visible
-                  ? { animationDelay: `${i * staggerMs}ms` }
-                  : { opacity: 0 }
-              }
+              className={state === "animate" ? "stagger-item" : ""}
+              style={itemStyle(i)}
             >
               {child}
             </div>

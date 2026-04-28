@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef, type ReactNode } from "react";
 
+type AnimState = "show" | "hide" | "animate";
+
 export function AnimateIn({
   children,
   className = "",
@@ -14,34 +16,34 @@ export function AnimateIn({
   fadeOnly?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
+  const [state, setState] = useState<AnimState>("show");
 
   useEffect(() => {
     const el = ref.current;
-    let cancelled = false;
-    const show = () => {
-      if (!cancelled) setVisible(true);
-    };
-    if (!el || typeof IntersectionObserver === "undefined") {
-      show();
-      return;
-    }
+    if (!el || typeof IntersectionObserver === "undefined") return;
     const rect = el.getBoundingClientRect();
-    if (rect.top < window.innerHeight) {
-      show();
-      return;
-    }
+    if (rect.top < window.innerHeight) return;
+
+    let cancelled = false;
+    const hide = () => {
+      if (!cancelled) setState("hide");
+    };
+    const animate = () => {
+      if (!cancelled) setState("animate");
+    };
+    hide();
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          show();
+          animate();
           observer.unobserve(el);
         }
       },
       { threshold: 0, rootMargin: "0px 0px -10% 0px" }
     );
     observer.observe(el);
-    const fallback = window.setTimeout(show, 1200);
+    const fallback = window.setTimeout(animate, 1200);
     return () => {
       cancelled = true;
       window.clearTimeout(fallback);
@@ -49,17 +51,21 @@ export function AnimateIn({
     };
   }, []);
 
+  const opacity = state === "hide" ? 0 : 1;
+  const transform =
+    state === "hide" && !fadeOnly ? "translateY(24px)" : undefined;
+  const transition =
+    state === "animate"
+      ? fadeOnly
+        ? `opacity 0.6s ease-out ${delay}s`
+        : `opacity 0.6s ease-out ${delay}s, transform 0.6s ease-out ${delay}s`
+      : undefined;
+
   return (
     <div
       ref={ref}
       className={className}
-      style={{
-        opacity: visible ? 1 : 0,
-        transform: fadeOnly ? undefined : (visible ? "translateY(0)" : "translateY(24px)"),
-        transition: fadeOnly
-          ? `opacity 0.6s ease-out ${delay}s`
-          : `opacity 0.6s ease-out ${delay}s, transform 0.6s ease-out ${delay}s`,
-      }}
+      style={{ opacity, transform, transition }}
     >
       {children}
     </div>
@@ -68,7 +74,7 @@ export function AnimateIn({
 
 export function CountUp({ value, suffix = "" }: { value: number; suffix?: string }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(value);
   const [started, setStarted] = useState(false);
 
   useEffect(() => {
@@ -76,7 +82,9 @@ export function CountUp({ value, suffix = "" }: { value: number; suffix?: string
     const el = ref.current;
     let cancelled = false;
     const start = () => {
-      if (!cancelled) setStarted(true);
+      if (cancelled) return;
+      setCount(0);
+      setStarted(true);
     };
     if (!el || typeof IntersectionObserver === "undefined") {
       start();

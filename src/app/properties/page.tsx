@@ -1,7 +1,7 @@
 import { supabaseAdmin } from "@/lib/supabase-server";
 import PropertiesPage from "./PropertiesClient";
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 async function getProperties() {
   const { data } = await supabaseAdmin
