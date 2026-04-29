@@ -358,6 +358,67 @@ export default function HomePage({ featuredProperties }: { featuredProperties: F
         </div>
       </section>
 
+      {/* ─── ABOUT / WHY CHOOSE US ─── */}
+      <section className="bg-white py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <AnimateIn>
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-8 h-px bg-brand" />
+                <span className="text-brand text-sm font-semibold tracking-[0.15em] uppercase">About McGowan Lettings</span>
+              </div>
+              <h2 className="font-heading text-3xl md:text-4xl font-semibold text-dark leading-tight mb-6">
+                A Personal Approach to
+                <br />
+                Property Lettings
+              </h2>
+              <p className="text-text-muted leading-relaxed mb-6">
+                With over 25 years of experience in the Greater Manchester lettings market,
+                McGowan Residential Lettings provides a hands-on, personal service that larger
+                agencies simply can&apos;t match. Founded in 2007 by David McGowan, who has been
+                in the industry since 2000, we know every street, every neighbourhood,
+                and every nuance of the local rental market.
+              </p>
+              <p className="text-text-muted leading-relaxed mb-8">
+                Whether you&apos;re a landlord looking for reliable tenants or a tenant searching
+                for your next home, David McGowan and the team are here to make the
+                process smooth, transparent, and stress-free.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center justify-center gap-2 bg-brand text-dark font-semibold px-6 py-3 rounded-sm hover:bg-brand-light transition-all duration-200 text-sm"
+                >
+                  Get in Touch
+                  <ArrowRightIcon className="w-3.5 h-3.5" />
+                </Link>
+                <Link
+                  href="/landlords"
+                  className="inline-flex items-center justify-center gap-2 border border-dark/20 text-dark font-semibold px-6 py-3 rounded-sm hover:bg-dark hover:text-white transition-all duration-200 text-sm"
+                >
+                  Our Services
+                </Link>
+              </div>
+            </AnimateIn>
+
+            <AnimateIn delay={0.2} className="relative mb-8 lg:mb-0">
+              <div className="aspect-[4/5] rounded-lg overflow-hidden relative">
+                <Image
+                  src="/david-mcgowan.jpg"
+                  alt="David McGowan, founder of McGowan Residential Lettings"
+                  fill
+                  className="object-cover object-[center_10%]"
+                />
+              </div>
+              <div className="absolute -bottom-6 -left-4 lg:-left-6 bg-dark text-white p-5 rounded-lg shadow-2xl max-w-[200px]">
+                <div className="text-2xl font-heading font-semibold text-brand mb-1">25+</div>
+                <div className="text-white/80 text-xs leading-snug">Years trusted by landlords &amp; tenants across Greater Manchester</div>
+              </div>
+            </AnimateIn>
+          </div>
+        </div>
+      </section>
+
       {/* ─── SERVICES ─── */}
       <section className="bg-cream py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-6">
@@ -567,67 +628,6 @@ export default function HomePage({ featuredProperties }: { featuredProperties: F
 
       {/* ─── TESTIMONIALS ─── */}
       <TestimonialsCarousel />
-
-      {/* ─── ABOUT / WHY CHOOSE US ─── */}
-      <section className="bg-white py-16 md:py-24">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <AnimateIn>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-px bg-brand" />
-                <span className="text-brand text-sm font-semibold tracking-[0.15em] uppercase">About McGowan Lettings</span>
-              </div>
-              <h2 className="font-heading text-3xl md:text-4xl font-semibold text-dark leading-tight mb-6">
-                A Personal Approach to
-                <br />
-                Property Lettings
-              </h2>
-              <p className="text-text-muted leading-relaxed mb-6">
-                With over 25 years of experience in the Greater Manchester lettings market,
-                McGowan Residential Lettings provides a hands-on, personal service that larger
-                agencies simply can&apos;t match. Founded in 2007 by David McGowan, who has been
-                in the industry since 2000, we know every street, every neighbourhood,
-                and every nuance of the local rental market.
-              </p>
-              <p className="text-text-muted leading-relaxed mb-8">
-                Whether you&apos;re a landlord looking for reliable tenants or a tenant searching
-                for your next home, David McGowan and the team are here to make the
-                process smooth, transparent, and stress-free.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link
-                  href="/contact"
-                  className="inline-flex items-center justify-center gap-2 bg-brand text-dark font-semibold px-6 py-3 rounded-sm hover:bg-brand-light transition-all duration-200 text-sm"
-                >
-                  Get in Touch
-                  <ArrowRightIcon className="w-3.5 h-3.5" />
-                </Link>
-                <Link
-                  href="/landlords"
-                  className="inline-flex items-center justify-center gap-2 border border-dark/20 text-dark font-semibold px-6 py-3 rounded-sm hover:bg-dark hover:text-white transition-all duration-200 text-sm"
-                >
-                  Our Services
-                </Link>
-              </div>
-            </AnimateIn>
-
-            <AnimateIn delay={0.2} className="relative mb-8 lg:mb-0">
-              <div className="aspect-[4/5] rounded-lg overflow-hidden relative">
-                <Image
-                  src="/david-mcgowan.jpg"
-                  alt="David McGowan, founder of McGowan Residential Lettings"
-                  fill
-                  className="object-cover object-[center_10%]"
-                />
-              </div>
-              <div className="absolute -bottom-6 -left-4 lg:-left-6 bg-dark text-white p-5 rounded-lg shadow-2xl max-w-[200px]">
-                <div className="text-2xl font-heading font-semibold text-brand mb-1">25+</div>
-                <div className="text-white/80 text-xs leading-snug">Years trusted by landlords &amp; tenants across Greater Manchester</div>
-              </div>
-            </AnimateIn>
-          </div>
-        </div>
-      </section>
 
       {/* ─── AREAS COVERED ─── */}
       <section className="bg-dark py-16 md:py-24 relative overflow-hidden noise-overlay">
