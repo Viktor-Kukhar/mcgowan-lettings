@@ -8,7 +8,7 @@ async function getProperties() {
     .from("properties")
     .select("id, title, price, location, area, beds, baths, type, images, status")
     .eq("active", true)
-    .order("created_at", { ascending: false });
+    .order("price", { ascending: false });
 
   return data ?? [];
 }
