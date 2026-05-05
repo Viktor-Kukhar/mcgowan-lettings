@@ -112,7 +112,7 @@ body {
 }
 
 /* Rendered rich text on public pages */
-.rich-content p { margin: 0 0 1rem; line-height: 1.8; color: color-mix(in oklab, var(--color-dark) 75%, transparent); }
+.rich-content p { margin: 0 0 1rem; line-height: 1.8; color: var(--color-text-muted); }
 .rich-content p:last-child { margin-bottom: 0; }
 .rich-content h2 {
   font-family: var(--font-heading), serif;
@@ -134,7 +134,7 @@ body {
 .rich-content ul, .rich-content ol {
   margin: 0 0 1.25rem;
   padding-left: 1.5rem;
-  color: color-mix(in oklab, var(--color-dark) 75%, transparent);
+  color: var(--color-text-muted);
   line-height: 1.8;
 }
 .rich-content ul { list-style-type: disc; }

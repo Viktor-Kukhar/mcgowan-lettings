@@ -1,22 +1,28 @@
 "use client";
 
 import { useState } from "react";
-import { renderInline, isHtml } from "@/lib/rich-text";
-import { sanitizeHtml } from "@/lib/sanitize-html";
+import { renderInline } from "@/lib/rich-text";
 
-export default function ExpandableDescription({ text }: { text: string }) {
+type Props =
+  | { html: string; plainText?: never }
+  | { html?: never; plainText: string };
+
+export default function ExpandableDescription(props: Props) {
   const [expanded, setExpanded] = useState(false);
 
-  const html = isHtml(text);
-  const plainLength = html ? text.replace(/<[^>]+>/g, " ").trim().length : text.length;
-  const paragraphCount = html
-    ? (text.match(/<p\b/gi) ?? []).length
-    : text.split(/\n\s*\n/).filter((p) => p.trim()).length;
+  const isHtml = "html" in props && props.html !== undefined;
+
+  const plainLength = isHtml
+    ? props.html.replace(/<[^>]+>/g, " ").trim().length
+    : props.plainText.length;
+  const paragraphCount = isHtml
+    ? (props.html.match(/<p\b/gi) ?? []).length
+    : props.plainText.split(/\n\s*\n/).filter((p) => p.trim()).length;
   const isLong = paragraphCount > 2 || plainLength > 500;
 
-  const legacyParagraphs = html
+  const legacyParagraphs = isHtml
     ? []
-    : text
+    : props.plainText
         .split(/\n\s*\n/)
         .map((p) => p.trim())
         .filter(Boolean);
@@ -26,10 +32,10 @@ export default function ExpandableDescription({ text }: { text: string }) {
       <div
         className={`relative ${!expanded && isLong ? "max-h-[150px] overflow-hidden" : ""}`}
       >
-        {html ? (
+        {isHtml ? (
           <div
             className="rich-content text-[15px]"
-            dangerouslySetInnerHTML={{ __html: sanitizeHtml(text) }}
+            dangerouslySetInnerHTML={{ __html: props.html }}
           />
         ) : (
           <div className="space-y-3">

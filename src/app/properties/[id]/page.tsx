@@ -9,6 +9,8 @@ export const dynamic = "force-dynamic";
 
 import PropertyGallery from "./PropertyGallery";
 import ExpandableDescription from "./ExpandableDescription";
+import { isHtml } from "@/lib/rich-text";
+import { sanitizeHtml } from "@/lib/sanitize-html";
 import {
   BedIcon,
   BathIcon,
@@ -248,7 +250,11 @@ export default async function PropertyDetailPage({ params }: Props) {
                   <h2 className="font-heading text-2xl font-semibold text-dark mb-4">
                     Description
                   </h2>
-                  <ExpandableDescription text={property.description} />
+                  {isHtml(property.description) ? (
+                    <ExpandableDescription html={sanitizeHtml(property.description)} />
+                  ) : (
+                    <ExpandableDescription plainText={property.description} />
+                  )}
                 </div>
               )}
 
