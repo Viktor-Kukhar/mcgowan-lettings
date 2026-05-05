@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { Fancybox } from "@fancyapps/ui";
 import "@fancyapps/ui/dist/fancybox/fancybox.css";
 import VideoLightbox from "./VideoLightbox";
 
@@ -18,15 +17,33 @@ export default function PropertyGallery({
   const [tourOpen, setTourOpen] = useState(false);
 
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (Fancybox.bind as any)("[data-fancybox='gallery']", {
-      animated: true,
-      hideScrollbar: false,
-      Thumbs: { type: "classic" },
-    });
+    // Lazy-load Fancybox so a parse error in @fancyapps/ui (which uses very
+    // modern JS syntax) on older iPad Safari can't kill hydration of the
+    // entire page. If the import or bind throws, photos gracefully fall back
+    // to opening as plain links; the rest of the React tree stays interactive.
+    let cancelled = false;
+    let loadedFancybox: typeof import("@fancyapps/ui").Fancybox | null = null;
+
+    (async () => {
+      try {
+        const mod = await import("@fancyapps/ui");
+        if (cancelled) return;
+        loadedFancybox = mod.Fancybox;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (loadedFancybox.bind as any)("[data-fancybox='gallery']", {
+          animated: true,
+          hideScrollbar: false,
+          Thumbs: { type: "classic" },
+        });
+      } catch (e) {
+        // Older Safari can't parse Fancybox v6 — leave links as-is.
+        console.warn("Fancybox unavailable; photos will open as direct links:", e);
+      }
+    })();
 
     return () => {
-      Fancybox.destroy();
+      cancelled = true;
+      loadedFancybox?.destroy();
     };
   }, []);
 
