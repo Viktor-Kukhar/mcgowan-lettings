@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { AnimateIn } from "@/components/AnimateIn";
 import { renderInline, isHtml } from "@/lib/rich-text";
+import { safeJsonLd } from "@/lib/json-ld";
 import { ArrowLeftIcon, ArrowRightIcon } from "@/components/Icons";
 import BlogRichContent from "./BlogRichContent";
 import { getPost } from "./get-post";
@@ -113,7 +114,7 @@ export default async function BlogPostPage({ params }: Props) {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(blogJsonLd) }}
       />
       {/* ─── HERO ─── */}
       <section className="relative h-[40vh] min-h-[320px] flex items-end overflow-hidden noise-overlay bg-dark pt-16">

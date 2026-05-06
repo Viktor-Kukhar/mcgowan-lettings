@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Metadata } from "next";
 import { supabaseAdmin } from "@/lib/supabase-server";
+import { safeJsonLd } from "@/lib/json-ld";
 import { getProperty } from "./get-property";
 
 export const dynamic = "force-dynamic";
@@ -176,8 +177,8 @@ export default async function PropertyDetailPage({ params }: Props) {
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbJsonLd) }} />
 
       {/* ── Gallery — full width ── */}
       <section className="bg-dark pt-16">

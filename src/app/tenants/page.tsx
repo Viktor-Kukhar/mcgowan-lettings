@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { AnimateIn } from "@/components/AnimateIn";
 import LogoRow from "@/components/LogoRow";
+import { safeJsonLd } from "@/lib/json-ld";
 import {
   ArrowRightIcon,
   CheckIcon,
@@ -182,7 +183,7 @@ export default function TenantsPage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(faqJsonLd) }}
       />
       {/* ─── HERO ─── */}
       <section className="relative h-[40vh] min-h-[320px] flex items-center overflow-hidden noise-overlay bg-dark pt-16">

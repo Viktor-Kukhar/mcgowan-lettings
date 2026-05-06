@@ -5,6 +5,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import SiteShell from "@/components/SiteShell";
 import { supabaseAdmin } from "@/lib/supabase-server";
+import { safeJsonLd } from "@/lib/json-ld";
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
@@ -130,7 +131,7 @@ export default async function RootLayout({
       <body className="min-h-full flex flex-col">
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
         />
         <SiteShell>{children}</SiteShell>
         <Analytics />
