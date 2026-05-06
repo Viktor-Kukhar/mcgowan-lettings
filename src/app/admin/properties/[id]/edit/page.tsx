@@ -132,37 +132,44 @@ export default function EditPropertyPage() {
     setUploading(true);
     setError("");
 
+    // Parallel compress+upload. See admin/properties/new for rationale.
+    const results = await Promise.allSettled(
+      Array.from(files).map(async (rawFile) => {
+        const file = await compressImage(rawFile);
+        const fileExt = file.name.split(".").pop();
+        const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${fileExt}`;
+        const filePath = `properties/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from("property-images")
+          .upload(filePath, file);
+
+        if (uploadError) {
+          throw new Error(`Failed to upload ${file.name}: ${uploadError.message}`);
+        }
+
+        const {
+          data: { publicUrl },
+        } = supabase.storage.from("property-images").getPublicUrl(filePath);
+
+        return publicUrl;
+      })
+    );
+
     const newUrls: string[] = [];
-
-    for (const rawFile of Array.from(files)) {
-      let file: File;
-      try {
-        file = await compressImage(rawFile);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to process image.");
-        continue;
+    const errors: string[] = [];
+    for (const result of results) {
+      if (result.status === "fulfilled") {
+        newUrls.push(result.value);
+      } else {
+        errors.push(result.reason instanceof Error ? result.reason.message : String(result.reason));
       }
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${fileExt}`;
-      const filePath = `properties/${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from("property-images")
-        .upload(filePath, file);
-
-      if (uploadError) {
-        setError(`Failed to upload ${file.name}: ${uploadError.message}`);
-        continue;
-      }
-
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from("property-images").getPublicUrl(filePath);
-
-      newUrls.push(publicUrl);
     }
 
     setImageUrls((prev) => [...prev, ...newUrls]);
+    if (errors.length > 0) {
+      setError(errors.length === 1 ? errors[0] : `${errors.length} images failed: ${errors[0]}`);
+    }
     setUploading(false);
     e.target.value = "";
   };
