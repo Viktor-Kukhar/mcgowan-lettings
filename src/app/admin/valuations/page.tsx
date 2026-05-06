@@ -34,7 +34,8 @@ export default function AdminValuationsPage() {
       const { data, error } = await supabase
         .from("valuation_requests")
         .select("*")
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false })
+        .limit(1000);
       if (cancelled) return;
       if (error) {
         setMessage({ text: "Failed to load valuation requests.", type: "error" });

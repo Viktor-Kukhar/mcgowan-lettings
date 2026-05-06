@@ -26,11 +26,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/areas/burnley`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.7 },
   ];
 
-  // Dynamic property pages
+  // Dynamic property pages. The hard limit is generous (David has ~18 active
+  // listings; the limit just prevents an unbounded query from timing out the
+  // sitemap if the table ever balloons).
   const { data: properties } = await supabaseAdmin
     .from("properties")
     .select("id, updated_at")
-    .eq("active", true);
+    .eq("active", true)
+    .limit(5000);
 
   const propertyPages: MetadataRoute.Sitemap = (properties ?? []).map((p) => ({
     url: `${baseUrl}/properties/${p.id}`,
@@ -39,11 +42,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  // Dynamic blog pages
+  // Dynamic blog pages. Same rationale as the property limit above.
   const { data: posts } = await supabaseAdmin
     .from("blog_posts")
     .select("slug, updated_at")
-    .eq("published", true);
+    .eq("published", true)
+    .limit(5000);
 
   const blogPages: MetadataRoute.Sitemap = (posts ?? []).map((p) => ({
     url: `${baseUrl}/blog/${p.slug}`,

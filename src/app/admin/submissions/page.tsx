@@ -31,7 +31,8 @@ export default function AdminSubmissionsPage() {
       const { data, error } = await supabase
         .from("contact_submissions")
         .select("*")
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false })
+        .limit(1000);
       if (cancelled) return;
       if (error) {
         setMessage({ text: "Failed to load submissions.", type: "error" });

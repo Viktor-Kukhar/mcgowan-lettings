@@ -72,7 +72,7 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     const fetchStats = async () => {
       const [propertiesRes, unreadRes] = await Promise.all([
-        supabase.from("properties").select("active"),
+        supabase.from("properties").select("active").limit(1000),
         supabase
           .from("contact_submissions")
           .select("id", { count: "exact", head: true })
