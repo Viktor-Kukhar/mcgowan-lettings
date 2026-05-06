@@ -47,6 +47,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title,
     description,
+    alternates: {
+      canonical: `/properties/${id}`,
+    },
     openGraph: {
       title,
       description,
@@ -70,20 +73,38 @@ export default async function PropertyDetailPage({ params }: Props) {
     notFound();
   }
 
-  const orFilters = [
-    property.area ? `area.eq.${property.area}` : null,
-    property.type ? `type.eq.${property.type}` : null,
-  ].filter(Boolean).join(",");
+  // Similar properties: same area OR same type. We run two parameterised
+  // .eq() queries in parallel and merge in JS, instead of building a raw
+  // PostgREST `.or()` filter string from user-controlled values (an area
+  // like "St James's" or a type with a comma would break the filter syntax
+  // and 500 the page).
+  const similarBase = () =>
+    supabaseAdmin
+      .from("properties")
+      .select("id, title, price, location, beds, baths, type, images, status")
+      .eq("active", true)
+      .neq("id", id)
+      .limit(3);
 
-  const similarQuery = supabaseAdmin
-    .from("properties")
-    .select("id, title, price, location, beds, baths, type, images, status")
-    .eq("active", true)
-    .neq("id", id);
+  const similarPromises = [];
+  if (property.area) similarPromises.push(similarBase().eq("area", property.area));
+  if (property.type) similarPromises.push(similarBase().eq("type", property.type));
 
-  const { data: similarProperties } = await (
-    orFilters ? similarQuery.or(orFilters) : similarQuery
-  ).limit(3);
+  const similarResults = similarPromises.length > 0
+    ? await Promise.all(similarPromises)
+    : [];
+
+  const seen = new Set<string>();
+  const similarProperties: NonNullable<typeof similarResults[number]["data"]> = [];
+  for (const result of similarResults) {
+    for (const p of result.data ?? []) {
+      if (seen.has(p.id)) continue;
+      seen.add(p.id);
+      similarProperties.push(p);
+      if (similarProperties.length >= 3) break;
+    }
+    if (similarProperties.length >= 3) break;
+  }
 
   const images: string[] = property.images ?? [];
   const videos: string[] = property.videos ?? [];
