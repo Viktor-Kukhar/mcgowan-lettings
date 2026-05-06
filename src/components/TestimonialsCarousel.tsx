@@ -168,10 +168,10 @@ export default function TestimonialsCarousel() {
             href="https://search.google.com/local/writereview?placeid=ChIJ7-uGq-eke0gRBKbenjpoV4E"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-brand-dark border border-brand/30 px-5 py-2 rounded-sm hover:bg-brand/10 transition-all duration-200"
+            className="group inline-flex items-center gap-2 text-sm font-semibold text-brand-dark border border-brand/30 px-5 py-2 rounded-sm hover:bg-brand/10 transition-all duration-200"
           >
             Leave Us a Review
-            <ArrowRightIcon className="w-3.5 h-3.5" />
+            <ArrowRightIcon className="w-3.5 h-3.5 shrink-0 translate-y-px transition-transform group-hover:translate-x-0.5" />
           </a>
         </AnimateIn>
 
