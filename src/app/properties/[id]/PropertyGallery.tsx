@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import "@fancyapps/ui/dist/fancybox/fancybox.css";
 import VideoLightbox from "./VideoLightbox";
@@ -17,6 +17,10 @@ export default function PropertyGallery({
   title: string;
 }) {
   const [tourOpen, setTourOpen] = useState(false);
+  // Tracks whether Fancybox actually bound. The "View all N photos" badge
+  // checks this before hijacking its own click — if Fancybox isn't ready the
+  // anchor is allowed to navigate to the /photos SSR fallback page instead.
+  const fancyboxReadyRef = useRef(false);
 
   useEffect(() => {
     // Lazy-load Fancybox so a parse error in @fancyapps/ui (which uses very
@@ -37,6 +41,7 @@ export default function PropertyGallery({
           hideScrollbar: false,
           Thumbs: { type: "classic" },
         });
+        fancyboxReadyRef.current = true;
       } catch (e) {
         // Older Safari can't parse Fancybox v6 — leave links as-is.
         console.warn("Fancybox unavailable; photos will open as direct links:", e);
@@ -45,6 +50,7 @@ export default function PropertyGallery({
 
     return () => {
       cancelled = true;
+      fancyboxReadyRef.current = false;
       loadedFancybox?.destroy();
     };
   }, []);
@@ -209,15 +215,16 @@ export default function PropertyGallery({
             </a>
           ))}
 
-          {/* Photo count — clickable to open gallery. The onClick triggers
-              the Fancybox-bound first-image link on modern browsers; if
-              hydration didn't run or Fancybox didn't bind (e.g. David's iPad),
-              the click falls through to the href and lands on the dedicated
-              SSR photos page where every image is visible. */}
+          {/* Photo count — clickable to open gallery. If Fancybox successfully
+              loaded and bound on the page, hijack the click and trigger the
+              lightbox via the first gallery anchor. If Fancybox didn't bind
+              (e.g. David's iPadOS 16 Safari), let the anchor navigate to the
+              dedicated SSR /photos page where every image is visible. */}
           <a
             href={`/properties/${propertyId}/photos`}
             className="absolute bottom-4 right-4 bg-white text-dark text-xs font-semibold px-3 py-2 rounded-md shadow-sm flex items-center gap-1.5 z-10 cursor-pointer hover:bg-gray-50 transition-colors"
             onClick={(e) => {
+              if (!fancyboxReadyRef.current) return;
               const firstLink = document.querySelector<HTMLAnchorElement>('[data-fancybox="gallery"]');
               if (firstLink) {
                 e.preventDefault();
