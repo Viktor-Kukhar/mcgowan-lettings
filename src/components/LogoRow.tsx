@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 
 const LOGOS = [
@@ -12,11 +12,18 @@ const LOGOS = [
   { src: "/logos/primelocation2.png", alt: "PrimeLocation", cls: "h-14 md:h-14" },
 ];
 
-type LogoState = "show" | "hide" | "animate";
-
+/**
+ * LogoRow — accreditation badges with a staggered fade-in on scroll.
+ *
+ * Same imperative-ref strategy as AnimateIn (see that file for the full
+ * rationale). SSR renders every logo visible. Below-fold, the effect hides
+ * each logo via `el.style.opacity = "0"`, then fades them back in with a
+ * per-logo transition delay on intersect or `pageshow`. No React state,
+ * so the React 19 cascading-render warning doesn't fire and there's no
+ * iPad bfcache failure mode to worry about.
+ */
 export default function LogoRow() {
   const ref = useRef<HTMLDivElement>(null);
-  const [state, setState] = useState<LogoState>("show");
 
   useEffect(() => {
     const el = ref.current;
@@ -25,17 +32,20 @@ export default function LogoRow() {
     if (rect.top < window.innerHeight) return;
 
     let cancelled = false;
-    const animate = () => {
-      if (!cancelled) setState("animate");
+    const childArr = Array.from(el.children) as HTMLElement[];
+
+    const reveal = () => {
+      if (cancelled) return;
+      childArr.forEach((child, i) => {
+        child.style.transition = `opacity 0.5s ease-out ${i * 0.15}s`;
+        child.style.opacity = "1";
+      });
     };
 
-    // Wire up reveal mechanisms before hiding. See AnimateIn.tsx for the
-    // full rationale on why we drop the 1.2s timer (it short-circuited
-    // scroll-reveal) and rely on `pageshow` for bfcache safety instead.
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          animate();
+          reveal();
           observer.unobserve(el);
         }
       },
@@ -44,11 +54,15 @@ export default function LogoRow() {
     observer.observe(el);
 
     const handlePageShow = (e: PageTransitionEvent) => {
-      if (e.persisted) animate();
+      if (e.persisted) reveal();
     };
     window.addEventListener("pageshow", handlePageShow);
 
-    setState("hide");
+    // Hide imperatively after the reveal mechanisms are wired. Any setup
+    // failure leaves the logos visible (the SSR default).
+    childArr.forEach((child) => {
+      child.style.opacity = "0";
+    });
 
     return () => {
       cancelled = true;
@@ -59,28 +73,20 @@ export default function LogoRow() {
 
   return (
     <div ref={ref} className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6">
-      {LOGOS.map((logo, i) => {
-        const opacity = state === "hide" ? 0 : 1;
-        const transition =
-          state === "animate"
-            ? `opacity 0.5s ease-out ${i * 0.15}s`
-            : undefined;
-        return (
-          <div
-            key={logo.alt}
-            className="flex items-center justify-center p-5 md:p-6"
-            style={{ opacity, transition }}
-          >
-            <Image
-              src={logo.src}
-              alt={logo.alt}
-              width={200}
-              height={80}
-              className={`${logo.cls} w-auto max-w-full object-contain`}
-            />
-          </div>
-        );
-      })}
+      {LOGOS.map((logo) => (
+        <div
+          key={logo.alt}
+          className="flex items-center justify-center p-5 md:p-6"
+        >
+          <Image
+            src={logo.src}
+            alt={logo.alt}
+            width={200}
+            height={80}
+            className={`${logo.cls} w-auto max-w-full object-contain`}
+          />
+        </div>
+      ))}
     </div>
   );
 }

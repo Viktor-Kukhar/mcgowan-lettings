@@ -1,22 +1,20 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 
 /**
- * StaggerGrid — same strategy as AnimateIn (see AnimateIn.tsx for full notes).
+ * StaggerGrid — same imperative-ref strategy as AnimateIn (see that file
+ * for the full rationale).
  *
- *   - SSR bakes in the CSS animation, so above-fold grids animate on load
- *     and a hydration failure cannot leave content invisible.
- *   - Below-fold grids hide on mount, then animate each child with its
- *     stagger delay when the grid scrolls into view.
- *   - The original iPad bfcache failure mode is covered by a `pageshow`
- *     handler that forces visible on `event.persisted=true`. We deliberately
- *     do NOT use a fixed-duration timer fallback — that would short-circuit
- *     scroll-reveal by auto-firing every below-fold animation after N
- *     seconds regardless of scroll position.
+ *   - SSR bakes each child's CSS animation with a per-index stagger delay,
+ *     so above-fold grids animate on first paint and a hydration failure
+ *     can never leave content invisible.
+ *   - Below-fold grids: the effect imperatively hides each child via
+ *     `el.style.opacity = "0"`, then re-triggers the staggered animation
+ *     when the grid scrolls into view (or on `pageshow` bfcache restore).
+ *   - No React state for the visual pipeline, so we never trip the React 19
+ *     cascading-render warning, and the iPad bfcache failure mode is moot.
  */
-
-type StaggerState = "css-load" | "hidden" | "io-animate";
 
 export function StaggerGrid({
   children,
@@ -28,7 +26,6 @@ export function StaggerGrid({
   staggerMs?: number;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const [state, setState] = useState<StaggerState>("css-load");
 
   useEffect(() => {
     const el = ref.current;
@@ -39,15 +36,28 @@ export function StaggerGrid({
     if (rect.top < window.innerHeight) return;
 
     let cancelled = false;
-    const animate = () => {
-      if (!cancelled) setState("io-animate");
+    const childArr = Array.from(el.children) as HTMLElement[];
+
+    const reveal = () => {
+      if (cancelled) return;
+      // Re-trigger the staggered animation. Clear styles and force a reflow
+      // before re-applying, so the browser actually restarts the animation
+      // instead of treating it as a no-op (it was already running from SSR).
+      childArr.forEach((child) => {
+        child.style.animation = "none";
+        child.style.opacity = "";
+        child.style.transform = "";
+      });
+      void el.offsetWidth;
+      childArr.forEach((child, i) => {
+        child.style.animation = `fadeInUp 0.5s ease-out ${i * staggerMs}ms both`;
+      });
     };
 
-    // Wire up reveal mechanisms before hiding — see AnimateIn.tsx.
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          animate();
+          reveal();
           observer.unobserve(el);
         }
       },
@@ -56,18 +66,24 @@ export function StaggerGrid({
     observer.observe(el);
 
     const handlePageShow = (e: PageTransitionEvent) => {
-      if (e.persisted) animate();
+      if (e.persisted) reveal();
     };
     window.addEventListener("pageshow", handlePageShow);
 
-    setState("hidden");
+    // Hide each child imperatively after observers are wired. Any setup
+    // failure leaves the SSR animation running (children remain visible).
+    childArr.forEach((child) => {
+      child.style.animation = "none";
+      child.style.opacity = "0";
+      child.style.transform = "translateY(24px)";
+    });
 
     return () => {
       cancelled = true;
       observer.disconnect();
       window.removeEventListener("pageshow", handlePageShow);
     };
-  }, []);
+  }, [staggerMs]);
 
   const items = Array.isArray(children) ? children : null;
 
@@ -82,18 +98,11 @@ export function StaggerGrid({
   return (
     <div ref={ref} className={className}>
       {items.map((child, i) => {
-        const delayMs = i * staggerMs;
-        let style: React.CSSProperties;
-
-        if (state === "hidden") {
-          style = { opacity: 0, transform: "translateY(24px)" };
-        } else if (state === "io-animate") {
-          style = { animation: `fadeInUp 0.5s ease-out ${delayMs}ms both` };
-        } else {
-          // css-load: SSR-baked animation that runs on first paint.
-          style = { animation: `fadeInUp 0.5s ease-out ${delayMs}ms both` };
-        }
-
+        // SSR-baked animation. The effect overrides this below-fold via the
+        // ref; React itself never re-renders the styles.
+        const style: React.CSSProperties = {
+          animation: `fadeInUp 0.5s ease-out ${i * staggerMs}ms both`,
+        };
         return (
           <div key={i} style={style}>
             {child}

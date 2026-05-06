@@ -7,45 +7,32 @@ import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 
  *
  * Strategy
  * --------
- * SSR always renders the element with its CSS animation baked in. That makes
- * the "above the fold" case work without JS at all and means a hydration
- * failure can never leave content invisible.
+ * The render pipeline always emits the element with its CSS animation set,
+ * with `animation-fill-mode: both`. That makes the "above the fold" case
+ * work without JS at all and means a hydration failure can never leave
+ * content invisible.
  *
- * After mount, below-the-fold elements opt into scroll-reveal: hide via
- * inline style, then reveal when an IntersectionObserver fires. This gives
- * us the rich on-scroll feel back on every browser (including iOS), without
- * regressing the iPad blank-page bug fixed in 07957b3 / c64bdcc.
+ * After mount, below-the-fold elements opt into scroll-reveal by mutating
+ * inline styles imperatively via the ref: pause the SSR animation, hide
+ * the element, then re-trigger the animation on intersect or on `pageshow`
+ * (the bfcache restore path).
  *
- * Why this is safe on iPad / Safari
- * ---------------------------------
- * The original failure mode was: page navigates away with state="hidden",
- * gets bfcache-frozen, navigates back with state still "hidden", and the
- * IntersectionObserver doesn't re-fire (because intersection state didn't
- * change during the freeze). Result: permanently invisible content.
+ * Why imperative DOM and not React state
+ * --------------------------------------
+ * Earlier versions used `useState` to flip "css-load" → "hidden" → "io-animate"
+ * synchronously inside the effect. React 19 (correctly) flags that as a
+ * cascading-render anti-pattern: the visual transition has nothing to do
+ * with React's data flow, so it shouldn't drive renders. Touching `el.style`
+ * directly keeps the whole pipeline outside React after first paint.
  *
- * We add two independent reveal mechanisms beyond the IntersectionObserver
- * itself:
- *
- *   1. A `pageshow` event handler that listens for `event.persisted=true`
- *      (i.e. bfcache restore) and forces the visible state immediately.
- *      The user has already seen the page once, so skipping the animation
- *      on bfcache is the right behaviour anyway. This is the explicit fix
- *      for the original iPad failure mode.
- *   2. The SSR-baked CSS animation with animation-fill-mode 'both' — even
- *      with no JS at all, the element ends up visible.
- *
- * (We deliberately do NOT use a fixed-duration safety-net timer. A timer
- * fires after N seconds regardless of scroll position, which short-circuits
- * the entire scroll-reveal effect for any element the user hasn't reached
- * yet. The bfcache scenario the original timer was guarding against is now
- * covered by the pageshow handler.)
- *
- * Order matters: we register the reveal mechanisms BEFORE calling
- * setState("hidden"), so any exception during setup leaves the element
- * visible.
+ * iOS / Safari notes
+ * ------------------
+ * The original iPad bfcache failure mode (state stuck "hidden", IO never
+ * re-fires after restore) is impossible here because React state never
+ * changes. We still listen for `pageshow` with `event.persisted=true` so a
+ * bfcache restore force-completes the animation; it's redundant safety on
+ * top of the SSR fill-mode default.
  */
-
-type AnimState = "css-load" | "hidden" | "io-animate";
 
 export function AnimateIn({
   children,
@@ -59,7 +46,7 @@ export function AnimateIn({
   fadeOnly?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const [state, setState] = useState<AnimState>("css-load");
+  const animationName = fadeOnly ? "fadeIn" : "fadeInUp";
 
   useEffect(() => {
     const el = ref.current;
@@ -67,19 +54,25 @@ export function AnimateIn({
     if (typeof IntersectionObserver === "undefined") return;
 
     const rect = el.getBoundingClientRect();
-    if (rect.top < window.innerHeight) return; // above-fold: leave the CSS animation alone
+    if (rect.top < window.innerHeight) return; // above-fold: leave SSR animation alone
 
     let cancelled = false;
-    const animate = () => {
-      if (!cancelled) setState("io-animate");
+    const reveal = () => {
+      if (cancelled) return;
+      // Re-trigger animation from zero. Clearing then setting is more
+      // reliable than mutating in place once the browser has already
+      // started the SSR-default animation.
+      el.style.animation = "none";
+      el.style.opacity = "";
+      el.style.transform = "";
+      void el.offsetWidth; // force reflow so the next assignment restarts
+      el.style.animation = `${animationName} 0.7s ease-out 0s both`;
     };
 
-    // Wire up every reveal mechanism BEFORE we hide the element, so an
-    // exception during setup can't leave it stuck invisible.
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          animate();
+          reveal();
           observer.unobserve(el);
         }
       },
@@ -87,41 +80,30 @@ export function AnimateIn({
     );
     observer.observe(el);
 
-    // bfcache safety net: if the page is restored from the back/forward
-    // cache (iOS Safari, modern desktop browsers), force visible. The user
-    // already saw the page on the previous visit — skipping the animation
-    // is fine and protects us from the IntersectionObserver-stuck failure
-    // mode that caused the original iPad blank-page bug.
     const handlePageShow = (e: PageTransitionEvent) => {
-      if (e.persisted) animate();
+      if (e.persisted) reveal();
     };
     window.addEventListener("pageshow", handlePageShow);
 
-    // Now safe to hide — every recovery path is in place.
-    setState("hidden");
+    // Hide imperatively, AFTER all reveal mechanisms are in place. If any
+    // of the listeners errored, we'd still be visible (animation already
+    // running from the SSR style).
+    el.style.animation = "none";
+    el.style.opacity = "0";
+    if (!fadeOnly) el.style.transform = "translateY(24px)";
 
     return () => {
       cancelled = true;
       observer.disconnect();
       window.removeEventListener("pageshow", handlePageShow);
     };
-  }, []);
+  }, [animationName, fadeOnly]);
 
-  const animationName = fadeOnly ? "fadeIn" : "fadeInUp";
-  let style: CSSProperties;
-
-  if (state === "hidden") {
-    style = {
-      opacity: 0,
-      transform: fadeOnly ? undefined : "translateY(24px)",
-    };
-  } else if (state === "io-animate") {
-    style = { animation: `${animationName} 0.7s ease-out 0s both` };
-  } else {
-    // "css-load" — the SSR default. Animation runs on first paint via the
-    // browser's own animation engine, independent of React.
-    style = { animation: `${animationName} 0.7s ease-out ${delay}s both` };
-  }
+  // SSR-baked animation; React never touches `style` after first paint —
+  // the effect drives all subsequent visual changes via the ref.
+  const style: CSSProperties = {
+    animation: `${animationName} 0.7s ease-out ${delay}s both`,
+  };
 
   return (
     <div ref={ref} className={className} style={style}>
