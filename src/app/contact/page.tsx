@@ -43,6 +43,10 @@ export default function ContactPage() {
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    // Guard against double-submit (rapid clicks while the first request is
+    // in flight). The button is also visually disabled, but this is the
+    // belt-and-braces version.
+    if (submitting) return;
     setSubmitting(true);
     setError("");
 
@@ -386,7 +390,7 @@ export default function ContactPage() {
                               </option>
                             ))}
                           </select>
-                          <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-text-muted">
+                          <span aria-hidden="true" className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-text-muted">
                             <svg
                               className="w-4 h-4"
                               fill="none"

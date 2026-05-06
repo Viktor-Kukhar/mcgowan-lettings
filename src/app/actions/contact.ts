@@ -1,9 +1,7 @@
 "use server";
 
 import { supabaseAdmin } from "@/lib/supabase-server";
-import { Resend } from "resend";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+import { getResend } from "@/lib/resend";
 
 function escapeHtml(text: string): string {
   return text
@@ -66,7 +64,7 @@ export async function submitContactForm(formData: {
 
     // Send email notification to David
     try {
-      await resend.emails.send({
+      await getResend().emails.send({
         from: "McGowan Lettings <notifications@mcgowanlettings.co.uk>",
         to: "info@mcgowanlettings.co.uk",
         replyTo: email.trim(),

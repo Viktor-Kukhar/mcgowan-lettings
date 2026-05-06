@@ -65,6 +65,8 @@ export default function ValuationPage() {
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    // Guard against double-submit. See contact/page.tsx for rationale.
+    if (submitting) return;
     setSubmitting(true);
     setError("");
 
@@ -312,7 +314,7 @@ export default function ValuationPage() {
                             </option>
                           ))}
                         </select>
-                        <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-text-muted">
+                        <span aria-hidden="true" className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-text-muted">
                           <svg
                             className="w-4 h-4"
                             fill="none"
@@ -357,7 +359,7 @@ export default function ValuationPage() {
                             </option>
                           ))}
                         </select>
-                        <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-text-muted">
+                        <span aria-hidden="true" className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-text-muted">
                           <svg
                             className="w-4 h-4"
                             fill="none"
@@ -405,7 +407,7 @@ export default function ValuationPage() {
                           </option>
                         ))}
                       </select>
-                      <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-text-muted">
+                      <span aria-hidden="true" className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-text-muted">
                         <svg
                           className="w-4 h-4"
                           fill="none"
