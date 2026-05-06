@@ -690,7 +690,7 @@ export default function HomePage({ featuredProperties }: { featuredProperties: F
       <section className="bg-cream py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div className="order-2 lg:order-1">
+            <AnimateIn className="order-2 lg:order-1">
               <div className="aspect-[3/2] rounded-lg overflow-hidden relative">
                 <Image
                   src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=800&h=533&fit=crop"
@@ -699,8 +699,8 @@ export default function HomePage({ featuredProperties }: { featuredProperties: F
                   className="object-cover"
                 />
               </div>
-            </div>
-            <div className="order-1 lg:order-2">
+            </AnimateIn>
+            <AnimateIn delay={0.2} className="order-1 lg:order-2">
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-8 h-px bg-brand" />
                 <span className="text-brand text-sm font-semibold tracking-[0.15em] uppercase">For Tenants</span>
@@ -738,7 +738,7 @@ export default function HomePage({ featuredProperties }: { featuredProperties: F
                 Tenant Information
                 <ArrowRightIcon className="w-3.5 h-3.5 shrink-0 translate-y-px transition-transform group-hover:translate-x-0.5" />
               </Link>
-            </div>
+            </AnimateIn>
           </div>
         </div>
       </section>
@@ -796,7 +796,7 @@ export default function HomePage({ featuredProperties }: { featuredProperties: F
       <section className="bg-cream py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-16">
-            <div>
+            <AnimateIn>
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-8 h-px bg-brand" />
                 <span className="text-brand text-sm font-semibold tracking-[0.15em] uppercase">Get in Touch</span>
@@ -832,10 +832,12 @@ export default function HomePage({ featuredProperties }: { featuredProperties: F
                   </div>
                 ))}
               </div>
-            </div>
+            </AnimateIn>
 
             {/* Contact form */}
-            <HomeContactForm />
+            <AnimateIn delay={0.2}>
+              <HomeContactForm />
+            </AnimateIn>
           </div>
         </div>
       </section>
