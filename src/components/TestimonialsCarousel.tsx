@@ -88,7 +88,17 @@ export default function TestimonialsCarousel() {
       });
   }, []);
 
-  // Show 1 on mobile, 2 on md, 3 on lg
+  // Show 1 card on mobile, 2 on md, 3 on lg.
+  //
+  // Layout is driven by a `--card-width` CSS variable (set per breakpoint
+  // below), NOT by JS state. That means the SSR HTML lays out correctly on
+  // any viewport — no flash of 3 desktop-width cards crammed onto a phone
+  // screen during the moment between paint and the resize-effect firing.
+  //
+  // We still track `visibleCount` in state for JS-only logic (clamping
+  // `current`, computing the dots count). Initial value 3 matches SSR; the
+  // effect refines it after mount. UX is unaffected because `current=0` on
+  // first paint produces no transform regardless of visibleCount.
   const [visibleCount, setVisibleCount] = useState(3);
 
   useEffect(() => {
@@ -193,20 +203,25 @@ export default function TestimonialsCarousel() {
             <ChevronRightIcon className="w-5 h-5" />
           </button>
 
-          {/* Track */}
-          <div className="overflow-hidden" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+          {/* Track. `--card-w` is the per-breakpoint card width; both the
+              card and the track translate use it, so the layout is correct
+              on the SSR pass for every viewport (no FOUC on mobile). */}
+          <div
+            className="overflow-hidden [--card-w:100%] md:[--card-w:50%] lg:[--card-w:33.3333%]"
+            onTouchStart={onTouchStart}
+            onTouchEnd={onTouchEnd}
+          >
             <div
               ref={trackRef}
               className="flex transition-transform duration-500 ease-in-out"
               style={{
-                transform: `translateX(-${current * (100 / visibleCount)}%)`,
+                transform: `translateX(calc(var(--card-w) * -${current}))`,
               }}
             >
               {TESTIMONIALS.map((testimonial, i) => (
                 <div
                   key={i}
-                  className="flex-shrink-0 px-3"
-                  style={{ width: `${100 / visibleCount}%` }}
+                  className="flex-shrink-0 px-3 w-[var(--card-w)]"
                 >
                   <div className="bg-white rounded-lg p-6 md:p-8 border border-black/5 relative h-full min-h-[320px] md:min-h-0 flex flex-col">
                     <div className="text-brand/20 text-6xl font-heading leading-none absolute top-4 right-6">&ldquo;</div>
