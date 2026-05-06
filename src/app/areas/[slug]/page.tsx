@@ -148,6 +148,46 @@ const AREAS: Record<string, AreaData> = {
     ],
   },
 
+  rochdale: {
+    name: "Rochdale",
+    slug: "rochdale",
+    description: [
+      "Rochdale is a historic mill town in Greater Manchester, set against the dramatic backdrop of the South Pennines. Famous as the birthplace of the modern co-operative movement — founded by the Rochdale Pioneers in 1844 — the town carries a strong sense of identity and a Grade I listed Victorian town hall widely regarded as one of the finest in England.",
+      "The rental market in Rochdale offers excellent value. Stone-built terraces, period semis and modern family homes can all be found at rents well below south Manchester levels. The surrounding townships of Heywood, Middleton, Littleborough and Milnrow add real variety, from canalside cottages to suburban family streets and country properties on the moorland edge.",
+      "Recent years have brought significant regeneration to the town centre, including the Rochdale Riverside shopping and leisure development and the celebrated daylighting of the River Roch — uncovering a section that had been buried beneath the town for over a century. Combined with growing rental demand, this has put Rochdale firmly back on the map for tenants and investors alike.",
+      "Transport is one of Rochdale's strongest assets. The Metrolink tram extension provides a direct service into Manchester city centre, while Rochdale railway station, the M62 and the A627(M) connect the town to Manchester, Leeds and the wider region in minutes.",
+    ],
+    neighbourhoods: [
+      "Heywood",
+      "Middleton",
+      "Littleborough",
+      "Milnrow",
+      "Norden",
+    ],
+    amenities: [
+      "Rochdale Town Hall — Grade I listed Gothic Revival landmark",
+      "Rochdale Riverside shopping and leisure development",
+      "Hollingworth Lake Country Park",
+      "Healey Dell Nature Reserve",
+      "Touchstones Rochdale museum and art gallery",
+      "Good range of primary and secondary schools",
+    ],
+    transport: [
+      "Metrolink tram — direct service into Manchester city centre",
+      "Rochdale railway station with services to Manchester Victoria and Leeds",
+      "M62 motorway access — Manchester, Leeds and the M6",
+      "A627(M) connecting to Oldham and the wider motorway network",
+      "Manchester Airport approximately 45 minutes by car",
+    ],
+    whyRentHere: [
+      "Excellent value compared to south Manchester and central postcodes",
+      "Direct Metrolink tram into Manchester city centre",
+      "Significant town-centre regeneration and ongoing investment",
+      "Beautiful Pennine countryside and Hollingworth Lake on the doorstep",
+      "Strong rental demand from families, professionals and commuters",
+    ],
+  },
+
   rossendale: {
     name: "Rossendale",
     slug: "rossendale",

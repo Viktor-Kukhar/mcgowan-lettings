@@ -19,7 +19,7 @@ export default function Footer() {
             </Link>
             <p className="text-white/40 text-sm mt-4 leading-relaxed max-w-xs">
               Professional letting agents based in Bury, covering Bolton, Manchester,
-              Rossendale, Accrington, Burnley &amp; beyond. Trusted by landlords and tenants for over 25 years.
+              Rochdale, Rossendale, Accrington, Burnley &amp; beyond. Trusted by landlords and tenants for over 25 years.
             </p>
           </div>
 
@@ -50,6 +50,7 @@ export default function Footer() {
                 { name: "Bury", slug: "bury" },
                 { name: "Bolton", slug: "bolton" },
                 { name: "Manchester", slug: "manchester" },
+                { name: "Rochdale", slug: "rochdale" },
                 { name: "Rossendale", slug: "rossendale" },
                 { name: "Accrington", slug: "accrington" },
                 { name: "Burnley", slug: "burnley" },

@@ -28,6 +28,13 @@ const AREAS = [
     highlight: null,
   },
   {
+    name: "Rochdale",
+    slug: "rochdale",
+    tagline: "Historic mill town with direct tram links into Manchester",
+    neighbourhoods: 5,
+    highlight: null,
+  },
+  {
     name: "Rossendale",
     slug: "rossendale",
     tagline: "Scenic valley living with growing commuter appeal",
