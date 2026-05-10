@@ -2,20 +2,13 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    // Vercel Hobby's image-optimization quota is finite. Once it ran out the
-    // whole site started returning 402 OPTIMIZED_IMAGE_REQUEST_PAYMENT_REQUIRED
-    // for every <Image>, including the hero, logo, and every property thumb.
-    // Bypass the optimizer entirely: <Image> serves the original URL.
-    //
-    // This is safe here because:
-    //   • Property uploads are already client-compressed to max 1600 px @ 75 %
-    //     in compressImage (see src/lib/compress-image.ts) — typical 500-700 KB.
-    //   • Supabase Storage is fronted by Cloudflare with strong cache hits.
-    //   • Public-dir assets are small (hero is the largest, kept ≤ 200 KB).
-    //
-    // Follow-up: once Supabase Image Transformations is toggled on for this
-    // project, swap this for a custom loader that hits the render endpoint.
-    unoptimized: true,
+    // Custom loader routes Supabase Storage URLs through Supabase's image
+    // transformation endpoint (included free in the Pro plan, CDN-cached by
+    // Cloudflare). Local /public assets and external URLs pass through. See
+    // src/lib/image-loader.ts for the full rationale — short version: this
+    // sidesteps Vercel's image-optimization quota entirely.
+    loader: "custom",
+    loaderFile: "./src/lib/image-loader.ts",
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     qualities: [75, 80, 85, 90],
