@@ -11,6 +11,17 @@ const PREFIXES = ["properties", "properties/videos", "epc"];
  */
 const MAX_DELETIONS_PER_CALL = 500;
 
+/**
+ * Files newer than this are never considered orphans. cleanupOrphans runs on
+ * every admin page mount via useStorageUsage, so a freshly-uploaded file
+ * sitting in React state — not yet linked to a `properties` row — would
+ * otherwise look indistinguishable from a true orphan and get nuked the
+ * moment the user opens a second tab or refreshes. 24 h is generous: it
+ * comfortably covers "upload now, save tomorrow morning" without letting
+ * actually-abandoned uploads accumulate for long.
+ */
+const MIN_ORPHAN_AGE_MS = 24 * 60 * 60 * 1000;
+
 function pathFromUrl(url: string | null | undefined): string | null {
   if (!url) return null;
   const marker = `/${BUCKET}/`;
@@ -68,6 +79,7 @@ export async function cleanupOrphans(): Promise<number> {
     if (epc) referenced.add(epc);
   }
 
+  const now = Date.now();
   const toDelete: string[] = [];
   for (const prefix of PREFIXES) {
     let offset = 0;
@@ -86,6 +98,15 @@ export async function cleanupOrphans(): Promise<number> {
 
       for (const file of data) {
         if (!file.metadata) continue;
+
+        // Grace window — see MIN_ORPHAN_AGE_MS. Skip if the file is younger
+        // than the threshold so in-progress uploads survive a concurrent
+        // page mount. If `created_at` is missing/unparsable, treat the file
+        // as fresh (fail-safe — better to skip a real orphan for one cycle
+        // than delete a live upload).
+        const created = file.created_at ? Date.parse(file.created_at) : NaN;
+        if (!Number.isFinite(created) || now - created < MIN_ORPHAN_AGE_MS) continue;
+
         const fullPath = `${prefix}/${file.name}`;
         if (!referenced.has(fullPath)) toDelete.push(fullPath);
       }
