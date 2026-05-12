@@ -665,9 +665,12 @@ export default function HomePage({ featuredProperties }: { featuredProperties: F
                     <h3 className="font-heading text-xl font-semibold text-white group-hover:text-brand transition-colors">
                       {area.name}
                       {area.main && (
-                        <span className="ml-2 text-[10px] font-semibold bg-brand/20 text-brand px-2 py-0.5 rounded tracking-wider uppercase align-middle">
-                          Main Area
-                        </span>
+                        <>
+                          {" "}
+                          <span className="ml-2 text-[10px] font-semibold bg-brand/20 text-brand px-2 py-0.5 rounded tracking-wider uppercase align-middle">
+                            Main Area
+                          </span>
+                        </>
                       )}
                     </h3>
                   </div>
