@@ -26,6 +26,7 @@ export default function VideoLightbox({
         controls: ["play-large", "play", "progress", "current-time", "fullscreen"],
         hideControls: false,
         clickToPlay: true,
+        fullscreen: { enabled: true, fallback: true, iosNative: true },
       });
     })();
 
