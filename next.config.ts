@@ -42,6 +42,9 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
+        // Legacy WordPress property slugs (text-based, e.g. "/properties/cosy-flat-bury").
+        // The `[g-z]` guard requires at least one letter g-z, which excludes our
+        // new UUID-style IDs (hex 0-9a-f only) so live property URLs aren't caught.
         source: "/properties/:slug([a-z0-9-]*[g-z][a-z0-9-]*)",
         destination: "/properties",
         permanent: true,

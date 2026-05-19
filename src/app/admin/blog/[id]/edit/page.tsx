@@ -206,7 +206,7 @@ export default function EditBlogPostPage() {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) return;
     setDeleting(true);
-    const result = await deleteBlogPostAction(id, coverImage || null, session.access_token);
+    const result = await deleteBlogPostAction(id, coverImage || null, session.access_token, form.slug);
 
     if (!result.success) {
       setError(result.error);

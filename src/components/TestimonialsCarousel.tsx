@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
-import { supabase } from "@/lib/supabase";
 import { AnimateIn } from "@/components/AnimateIn";
 import {
   StarIcon,
@@ -70,23 +69,10 @@ const GOOGLE_ICON = (
   </svg>
 );
 
-export default function TestimonialsCarousel() {
+export default function TestimonialsCarousel({ reviewCount }: { reviewCount: number }) {
   const [current, setCurrent] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const [reviewCount, setReviewCount] = useState(370);
   const trackRef = useRef<HTMLDivElement>(null);
-
-  // Fetch live review count from Supabase (falls back to 370)
-  useEffect(() => {
-    supabase
-      .from("site_config")
-      .select("value")
-      .eq("key", "google_review_count")
-      .single()
-      .then(({ data }) => {
-        if (data?.value) setReviewCount(parseInt(data.value, 10));
-      });
-  }, []);
 
   // Show 1 card on mobile, 2 on md, 3 on lg.
   //

@@ -204,7 +204,13 @@ function HomeContactForm() {
 
 /* ───────────────────────── MAIN PAGE ───────────────────────── */
 
-export default function HomePage({ featuredProperties }: { featuredProperties: FeaturedProperty[] }) {
+export default function HomePage({
+  featuredProperties,
+  reviewCount,
+}: {
+  featuredProperties: FeaturedProperty[];
+  reviewCount: number;
+}) {
   const router = useRouter();
   const [heroArea, setHeroArea] = useState("");
   const [heroPrice, setHeroPrice] = useState("");
@@ -408,6 +414,7 @@ export default function HomePage({ featuredProperties }: { featuredProperties: F
                   src="/david-mcgowan.jpg"
                   alt="David McGowan, founder of McGowan Residential Lettings"
                   fill
+                  sizes="(max-width: 1024px) 100vw, 50vw"
                   className="object-cover object-[center_10%]"
                 />
               </div>
@@ -628,7 +635,7 @@ export default function HomePage({ featuredProperties }: { featuredProperties: F
       </section>
 
       {/* ─── TESTIMONIALS ─── */}
-      <TestimonialsCarousel />
+      <TestimonialsCarousel reviewCount={reviewCount} />
 
       {/* ─── AREAS COVERED ─── */}
       <section className="bg-dark py-16 md:py-24 relative overflow-hidden noise-overlay">

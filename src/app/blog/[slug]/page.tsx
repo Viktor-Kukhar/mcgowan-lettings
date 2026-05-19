@@ -8,7 +8,9 @@ import { ArrowLeftIcon, ArrowRightIcon } from "@/components/Icons";
 import BlogRichContent from "./BlogRichContent";
 import { getPost } from "./get-post";
 
-export const dynamic = "force-dynamic";
+// Cached statically; admin `updateBlogPost` calls `revalidatePath` on the
+// slug, so edits go live immediately. The 60s ceiling is a safety net.
+export const revalidate = 60;
 
 type Props = {
   params: Promise<{ slug: string }>;

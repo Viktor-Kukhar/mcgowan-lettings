@@ -73,7 +73,7 @@ export default function AdminBlogPage() {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) return;
     setDeletingId(post.id);
-    const result = await deleteBlogPostAction(post.id, post.cover_image, session.access_token);
+    const result = await deleteBlogPostAction(post.id, post.cover_image, session.access_token, post.slug);
     if (!result.success) {
       setMessage({ text: result.error || "Failed to delete post.", type: "error" });
       setDeletingId(null);

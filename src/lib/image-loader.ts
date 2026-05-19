@@ -16,7 +16,10 @@
  *   • Supabase Storage URL + smaller width → /storage/v1/render/image/public/…
  *     with ?width=N&resize=contain&quality=N (tested empirically: this is the
  *     only param combo that aspect-preserves a width-only resize).
- *   • Anything else (local /public assets, external Unsplash) → served verbatim.
+ *   • Anything else (local /public files, external Unsplash) → original URL
+ *     with `?_w=N` appended (underscore-prefixed so Unsplash ignores it and
+ *     doesn't re-crop). Same bytes served, but Next sees distinct URLs per
+ *     width, satisfying its loader contract check.
  *
  * Next.js calls this once per (src, width) pair when building srcset, so a
  * single image fans out to ~6-8 URLs spanning deviceSizes/imageSizes. Supabase
@@ -41,22 +44,26 @@ type LoaderArgs = {
 
 export default function imageLoader({ src, width, quality }: LoaderArgs): string {
   const match = src.match(SUPABASE_PUBLIC_OBJECT);
-  if (!match) {
-    // Local /public files, external URLs — pass through unchanged.
-    return src;
+  if (match) {
+    // Variants at or above the source cap: serve the original. Supabase's render
+    // endpoint won't upscale anyway, and skipping it avoids the extra lossy pass.
+    if (width >= SOURCE_MAX_WIDTH) {
+      return src;
+    }
+    const [, origin, path] = match;
+    const params = new URLSearchParams({
+      width: String(width),
+      resize: "contain",
+      quality: String(quality ?? 85),
+    });
+    return `${origin}/storage/v1/render/image/public/${path}?${params.toString()}`;
   }
 
-  // Variants at or above the source cap: serve the original. Supabase's render
-  // endpoint won't upscale anyway, and skipping it avoids the extra lossy pass.
-  if (width >= SOURCE_MAX_WIDTH) {
-    return src;
-  }
-
-  const [, origin, path] = match;
-  const params = new URLSearchParams({
-    width: String(width),
-    resize: "contain",
-    quality: String(quality ?? 85),
-  });
-  return `${origin}/storage/v1/render/image/public/${path}?${params.toString()}`;
+  // Local /public files and external URLs (Unsplash) — pass through, but
+  // append a per-width marker (`_w`, not `w`, so Unsplash doesn't re-crop
+  // and aspect ratio is preserved) so Next's per-width srcset entries are
+  // distinct. This silences the dev "loader does not implement width"
+  // warning without changing the bytes the browser fetches.
+  const separator = src.includes("?") ? "&" : "?";
+  return `${src}${separator}_w=${width}`;
 }

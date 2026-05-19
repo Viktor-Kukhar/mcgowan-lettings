@@ -4,8 +4,8 @@ import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import SiteShell from "@/components/SiteShell";
-import { supabaseAdmin } from "@/lib/supabase-server";
 import { safeJsonLd } from "@/lib/json-ld";
+import { getReviewCount } from "@/lib/get-review-count";
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
@@ -48,20 +48,6 @@ export const metadata: Metadata = {
   },
   manifest: "/site.webmanifest",
 };
-
-async function getReviewCount(): Promise<number | null> {
-  try {
-    const { data } = await supabaseAdmin
-      .from("site_config")
-      .select("value")
-      .eq("key", "google_review_count")
-      .single();
-    const parsed = data?.value ? Number(data.value) : NaN;
-    return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
-  } catch {
-    return null;
-  }
-}
 
 export default async function RootLayout({
   children,

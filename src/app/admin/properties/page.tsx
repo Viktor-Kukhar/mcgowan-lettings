@@ -25,6 +25,7 @@ export default function AdminPropertiesPage() {
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
   const [toggling, setToggling] = useState<string | null>(null);
+  const [togglingFeatured, setTogglingFeatured] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [message, setMessage] = useState<{
     text: string;
@@ -89,8 +90,10 @@ export default function AdminPropertiesPage() {
   };
 
   const toggleFeatured = async (id: string, currentFeatured: boolean) => {
+    if (togglingFeatured === id) return;
+    setTogglingFeatured(id);
     const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return;
+    if (!session) { setTogglingFeatured(null); return; }
 
     const result = await togglePropertyFeatured(id, !currentFeatured, session.access_token);
     if (!result.success) {
@@ -102,6 +105,7 @@ export default function AdminPropertiesPage() {
         )
       );
     }
+    setTogglingFeatured(null);
     setTimeout(() => setMessage(null), 3000);
   };
 
@@ -251,7 +255,8 @@ export default function AdminPropertiesPage() {
                         onClick={() =>
                           toggleFeatured(property.id, property.featured)
                         }
-                        className={`transition-colors ${
+                        disabled={togglingFeatured === property.id}
+                        className={`transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                           property.featured
                             ? "text-amber-500"
                             : "text-gray-300 hover:text-amber-400"
@@ -366,7 +371,8 @@ export default function AdminPropertiesPage() {
                         onClick={() =>
                           toggleFeatured(property.id, property.featured)
                         }
-                        className={`flex items-center gap-1 text-xs ${
+                        disabled={togglingFeatured === property.id}
+                        className={`flex items-center gap-1 text-xs disabled:opacity-50 disabled:cursor-not-allowed ${
                           property.featured
                             ? "text-amber-500"
                             : "text-gray-400"

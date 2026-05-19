@@ -51,7 +51,7 @@ export async function deleteProperty(id: string, imageUrls: string[], accessToke
   return { success: true, error: "" };
 }
 
-export async function deleteBlogPost(id: string, coverImage: string | null, accessToken: string) {
+export async function deleteBlogPost(id: string, coverImage: string | null, accessToken: string, slug?: string) {
   await requireAdmin(accessToken);
   // Remove cover image from storage
   if (coverImage) {
@@ -70,6 +70,9 @@ export async function deleteBlogPost(id: string, coverImage: string | null, acce
     return { success: false, error: error.message };
   }
   revalidatePath("/blog");
+  // Blog post page is now ISR — explicitly invalidate the deleted slug so
+  // the cached HTML doesn't keep serving a 404'd post for up to 60s.
+  if (slug) revalidatePath(`/blog/${slug}`);
   return { success: true, error: "" };
 }
 
