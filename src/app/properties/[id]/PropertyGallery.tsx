@@ -76,8 +76,8 @@ export default function PropertyGallery({
         className="absolute z-10 top-4 left-4 flex items-center gap-2.5 rounded-full bg-dark/90 backdrop-blur-sm text-white font-semibold shadow-lg hover:bg-brand hover:text-dark transition-colors px-4 py-2.5 text-sm"
       >
         <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand text-dark">
-          <svg className="h-3.5 w-3.5 translate-x-[1px]" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M8 5v14l11-7L8 5z" />
+          <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8.33 5v14l11-7L8.33 5z" />
           </svg>
         </span>
         Virtual Tour
