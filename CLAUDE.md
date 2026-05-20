@@ -1,6 +1,6 @@
 # McGowan Lettings
 
-Premium letting-agent website for David McGowan (McGowan Residential Lettings Ltd). Public marketing site + property listings + a custom admin where David manages properties, blog posts, and form submissions by hand (he has no property-management software). Built by Viktor. **Commit and push straight to `main` — no feature branches, no PRs, for the small fixes that make up most work here.**
+Premium letting-agent website for David McGowan (McGowan Residential Lettings Ltd). Public marketing site + property listings + a custom admin where David manages properties, blog posts, and form submissions by hand (he has no property-management software). Built by Viktor. **When committing and pushing, go straight to `main` — no feature branches, no PRs, for the small fixes that make up most work here.**
 
 ## Stack
 
@@ -69,7 +69,11 @@ Defined in `src/app/globals.css` via Tailwind v4 `@theme` — use these tokens, 
 - Fonts: headings = Playfair Display (`--font-heading`/`--font-playfair`, serif), body = Plus Jakarta Sans (`--font-body`/`--font-jakarta`), loaded via `next/font` in `layout.tsx`
 - Helpers: `.noise-overlay`, `.text-gradient-brand`, `.animate-fade-in-up` / `.animate-fade-in` / `.animate-slide-down`, `.stagger-1..4`. Animations collapse under `prefers-reduced-motion` — keep that.
 
-Style direction: clean, premium, generous whitespace, mobile-first, large property imagery; reference is **modern-facade.co.uk** (David's confirmed favourite). Logo at `public/mcgowan-logo.png`, hero (Manchester aerial) at `public/hero.jpg`, regulatory/syndication badges in `public/logos`, certificates in `public/certificates`.
+Style direction: clean, premium, generous whitespace, mobile-first, large property imagery; reference is **modern-facade.co.uk** (David's confirmed favourite).
+
+**Cross-browser & responsive (non-negotiable):** the site must render and behave perfectly in all major browsers (Chrome, Safari, Firefox, Edge — including iOS Safari and Android Chrome) and across every device and Tailwind breakpoint (`sm`/`md`/`lg`/`xl`/`2xl`), from small phones up to large desktops. No horizontal overflow, no broken layouts, no clipped or overlapping content, touch targets ≥44px. Test changes at multiple widths before pushing.
+
+Assets: logo at `public/mcgowan-logo.png`, hero (Manchester aerial) at `public/hero.jpg`, regulatory/syndication badges in `public/logos`, certificates in `public/certificates`.
 
 ## Client & content context
 
