@@ -20,7 +20,7 @@ import {
 // fall through to the dynamic list and are appended alphabetically.
 const KNOWN_AREAS = ["Bury", "Bolton", "Manchester", "Rochdale", "Rossendale", "Accrington", "Burnley"] as const;
 const MAX_PRICES = ["Any Price", "£500", "£750", "£1,000", "£1,250", "£1,500", "£2,000+"] as const;
-const BEDROOMS = ["Any Beds", "1", "2", "3", "4+"] as const;
+const BEDROOMS = ["Any Beds", "Studio", "1", "2", "3", "4+"] as const;
 const PROPERTY_TYPES = ["All Types", "House", "Apartment", "Flat", "Bungalow"] as const;
 
 type Property = {
@@ -46,6 +46,7 @@ function parsePriceFilter(value: string): number | null {
 
 function parseBedsFilter(value: string): number | null {
   if (value === "Any Beds") return null;
+  if (value === "Studio") return 0;
   if (value === "4+") return 4;
   return parseInt(value, 10);
 }
