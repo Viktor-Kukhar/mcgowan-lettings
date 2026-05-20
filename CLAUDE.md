@@ -77,4 +77,4 @@ Assets: logo at `public/mcgowan-logo.png`, hero (Manchester aerial) at `public/h
 
 ## Client & content context
 
-David: in lettings since 2000, founded McGowan Lettings 2007 (25+ years). ~18 active properties (manages manually). Areas: **Bury (main)**, plus Bolton, Manchester, Rossendale + ~20 neighbourhoods — "will cover most areas if the house is in good order". Google reviews are a priority feature. Viktor drafts all copy from the current site (mcgowanlettings.co.uk) for David to review. Fuller competitor/audit notes in `RESEARCH.md`. Live status, support-plan, and infra details live in Viktor's Claude memory, not here (they go stale fast).
+David: in lettings since 2000, founded McGowan Lettings 2007 (25+ years). ~18 active properties (manages manually). Areas: **Bury (main)**, plus Bolton, Manchester, Rossendale + ~20 neighbourhoods — "will cover most areas if the house is in good order". Viktor drafts all copy from the current site (mcgowanlettings.co.uk) for David to review. Fuller competitor/audit notes in `RESEARCH.md`. Live status, support-plan, and infra details live in Viktor's Claude memory, not here (they go stale fast).
