@@ -183,6 +183,74 @@ a[data-fancybox]:focus-visible {
   --plyr-color-main: var(--color-brand);
   --plyr-control-radius: 4px;
 }
+
+/* Background-music control injected into Plyr's toolbar.
+   Selectors below carry .plyr-music-control as a prefix so they beat
+   Plyr's own .plyr--full-ui input[type="range"] specificity (0,2,1);
+   without this, Plyr resets our gradient + height back to its defaults. */
+.plyr-music-control {
+  padding-left: 4px;
+}
+.plyr-music-control input[type="range"].plyr-music-slider {
+  appearance: none;
+  -webkit-appearance: none;
+  height: 5px;
+  border-radius: 100px;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  background: linear-gradient(
+    to right,
+    var(--color-brand) 0%,
+    var(--color-brand) calc(var(--music-vol, 0) * 1%),
+    rgba(255, 255, 255, 0.3) calc(var(--music-vol, 0) * 1%),
+    rgba(255, 255, 255, 0.3) 100%
+  );
+  color: transparent;
+}
+.plyr-music-control input[type="range"].plyr-music-slider:focus { outline: none; }
+.plyr-music-control input[type="range"].plyr-music-slider:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 4px;
+  border-radius: 100px;
+}
+.plyr-music-control input[type="range"].plyr-music-slider::-webkit-slider-runnable-track {
+  height: 5px;
+  background: transparent;
+  border: none;
+  border-radius: 100px;
+}
+.plyr-music-control input[type="range"].plyr-music-slider::-moz-range-track {
+  height: 5px;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.3);
+}
+.plyr-music-control input[type="range"].plyr-music-slider::-moz-range-progress {
+  height: 5px;
+  border-radius: 100px;
+  background: var(--color-brand);
+}
+.plyr-music-control input[type="range"].plyr-music-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #fff;
+  border: none;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  margin-top: -4px;
+  cursor: pointer;
+}
+.plyr-music-control input[type="range"].plyr-music-slider::-moz-range-thumb {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #fff;
+  border: none;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+}
 /* When fullscreen is active (native API or CSS fallback), drop the rounded
    clip/overflow on the wrapper — clip-path on an ancestor visually clips
    position:fixed descendants, which made the video disappear on mobile. */
